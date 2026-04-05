@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر فاخر | العرض الحصري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --bg: #f8f9fa;
+            --text: #333;
+            --white: #ffffff;
+            --danger: #dc3545;
+            --success: #28a745;
+            --radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        .hidden { display: none !important; }
+
+        /* --- Landing Page Styles --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: var(--white); padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
+        header h1 { color: var(--gold); font-weight: 900; letter-spacing: 1px; }
+
+        .hero-section { display: flex; flex-wrap: wrap; gap: 40px; padding: 40px 0; }
+        .product-gallery { flex: 1; min-width: 300px; }
+        .golden-frame {
+            border: 4px solid var(--gold);
+            padding: 10px;
+            border-radius: var(--radius);
+            background: var(--white);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .main-img { width: 100%; border-radius: 8px; display: block; transition: var(--transition); }
+        .main-img:hover { transform: scale(1.05); }
+        .thumbnails { display: flex; gap: 10px; margin-top: 15px; justify-content: center; }
+        .thumb { width: 70px; height: 70px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: var(--transition); }
+        .thumb.active { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
+
+        .product-info { flex: 1; min-width: 300px; background: var(--white); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .product-title { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        .product-desc { color: #666; margin-bottom: 20px; font-size: 1.1rem; }
+        .price-tag { font-size: 2.5rem; font-weight: 900; color: var(--gold); margin-bottom: 20px; }
+        
+        .options-group { margin-bottom: 20px; }
+        .options-group h4 { margin-bottom: 10px; color: var(--primary); }
+        .color-options, .size-options { display: flex; gap: 10px; }
+        .color-btn { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; transition: var(--transition); }
+        .color-btn.active { border-color: var(--gold); transform: scale(1.2); box-shadow: 0 0 10px var(--gold); }
+        .size-btn { padding: 8px 20px; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; background: var(--white); transition: var(--transition); font-weight: bold; }
+        .size-btn.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+        .order-form { background: #fdfdfd; padding: 20px; border-radius: var(--radius); border: 1px solid #eee; margin-top: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; transition: var(--transition); }
+        .form-control:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,0.2); }
+        
+        .checkout-summary { background: var(--primary); color: var(--white); padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .summary-total { font-size: 1.5rem; font-weight: bold; color: var(--gold); border-top: 1px solid #555; padding-top: 10px; margin-top: 10px; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #d4af37, #f3e5ab, #d4af37);
+            background-size: 200% 200%;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(212,175,55,0.4);
+            animation: gradientMove 3s ease infinite, pulse 2s infinite;
+            transition: var(--transition);
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(212,175,55,0.6); }
+
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* Social Proof & Extra Sections */
+        .section-title { text-align: center; font-size: 2rem; margin: 40px 0 20px; color: var(--primary); }
+        .reviews { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+        .review-card { background: var(--white); padding: 20px; border-radius: var(--radius); width: 300px; box-shadow: var(--shadow); }
+        .stars { color: var(--gold); margin-bottom: 10px; }
+
+        /* --- Admin Panel Styles --- */
+        .admin-wrapper { display: flex; min-height: 100vh; background: #f4f6f9; }
+        .sidebar { width: 250px; background: var(--primary); color: var(--white); padding: 20px; }
+        .sidebar h2 { color: var(--gold); margin-bottom: 30px; text-align: center; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { padding: 15px; border-bottom: 1px solid #333; cursor: pointer; transition: var(--transition); }
+        .sidebar ul li:hover { background: #333; color: var(--gold); }
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        
+        .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--primary); }
+        .login-box { background: var(--white); padding: 40px; border-radius: var(--radius); width: 100%; max-width: 400px; text-align: center; }
+        
+        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { padding: 20px; border-radius: var(--radius); color: var(--white); box-shadow: var(--shadow); text-align: center; cursor:pointer;}
+        .card-new { background: #17a2b8; }
+        .card-all { background: #6c757d; }
+        .card-confirmed { background: var(--success); }
+        .card-canceled { background: var(--danger); }
+        .card h3 { font-size: 2rem; margin-top: 10px; }
+
+        .table-responsive { overflow-x: auto; background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #ddd; }
+        th { background: var(--primary); color: var(--white); }
+        .status-select { padding: 5px; border-radius: 5px; border: 1px solid #ddd; }
+
+        @media (max-width: 768px) {
+            .hero-section { flex-direction: column; }
+            .admin-wrapper { flex-direction: column; }
+            .sidebar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= LANDING PAGE ================= -->
+    <div id="landing-page">
+        <header>
+            <div class="container">
+                <h1>LUXURY STORE <i class="fa-solid fa-crown"></i></h1>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="hero-section">
+                <!-- Product Gallery -->
+                <div class="product-gallery">
+                    <div class="golden-frame">
+                        <img id="main-product-img" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Product" class="main-img">
+                    </div>
+                    <div class="thumbnails">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" class="thumb active" onclick="changeImage(this)">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" class="thumb" onclick="changeImage(this)">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" class="thumb" onclick="changeImage(this)">
+                    </div>
+                </div>
+
+                <!-- Product Info & Form -->
+                <div class="product-info">
+                    <h2 class="product-title" id="product-name">الساعة الفاخرة V8</h2>
+                    <p class="product-desc">تصميم عصري وجذاب يناسب جميع الإطلالات. مصنوعة من مواد عالية الجودة لتدوم طويلاً.</p>
+                    <div class="price-tag"><span id="product-price">8500</span> د.ج</div>
+
+                    <div class="options-group">
+                        <h4>اللون:</h4>
+                        <div class="color-options">
+                            <div class="color-btn active" style="background-color: #000;" onclick="selectColor(this, 'أسود')"></div>
+                            <div class="color-btn" style="background-color: #d4af37;" onclick="selectColor(this, 'ذهبي')"></div>
+                            <div class="color-btn" style="background-color: #c0c0c0;" onclick="selectColor(this, 'فضي')"></div>
+                        </div>
+                    </div>
+
+                    <div class="options-group">
+                        <h4>المقاس:</h4>
+                        <div class="size-options">
+                            <button class="size-btn active" onclick="selectSize(this, 'M')">M</button>
+                            <button class="size-btn" onclick="selectSize(this, 'L')">L</button>
+                            <button class="size-btn" onclick="selectSize(this, 'XL')">XL</button>
+                        </div>
+                    </div>
+
+                    <div class="order-form">
+                        <h3 style="margin-bottom: 15px; color: var(--primary);">استمارة الطلب</h3>
+                        <form id="checkout-form" onsubmit="submitOrder(event)">
+                            <div class="form-group">
+                                <label>الاسم الكامل</label>
+                                <input type="text" id="cust-name" class="form-control" required placeholder="أدخل اسمك الكامل">
+                            </div>
+                            <div class="form-group">
+                                <label>رقم الهاتف</label>
+                                <input type="tel" id="cust-phone" class="form-control" required placeholder="05XX XX XX XX">
+                            </div>
+                            <div class="form-group">
+                                <label>الولاية</label>
+                                <select id="cust-wilaya" class="form-control" required onchange="calculateTotal()">
+                                    <!-- Wilayas will be injected here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>البلدية / العنوان</label>
+                                <input type="text" id="cust-address" class="form-control" required placeholder="أدخل عنوانك بالتفصيل">
+                            </div>
+                            <div class="form-group">
+                                <label>نوع التوصيل</label>
+                                <select id="cust-delivery" class="form-control" onchange="calculateTotal()">
+                                    <option value="home">توصيل للمنزل</option>
+                                    <option value="desk">استلام من المكتب</option>
+                                </select>
+                            </div>
+
+                            <div class="checkout-summary">
+                                <div class="summary-row">
+                                    <span>سعر المنتج:</span>
+                                    <span><span id="sum-price">8500</span> د.ج</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>سعر الشحن:</span>
+                                    <span><span id="sum-shipping">600</span> د.ج</span>
+                                </div>
+                                <div class="summary-row summary-total">
+                                    <span>المجموع:</span>
+                                    <span><span id="sum-total">9100</span> د.ج</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit">تأكيد الطلب الآن <i class="fa-solid fa-cart-shopping"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <h2 class="section-title">آراء عملائنا ⭐</h2>
+            <div class="reviews">
+                <div class="review-card">
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <h4>أحمد من الجزائر</h4>
+                    <p>"منتج ممتاز جداً والتوصيل كان سريعاً في يومين فقط. شكراً لكم!"</p>
+                </div>
+                <div class="review-card">
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                    <h4>سارة من وهران</h4>
+                    <p>"الجودة فاقت توقعاتي، والتغليف كان فخماً جداً. أنصح به بشدة."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ADMIN LOGIN ================= -->
+    <div id="admin-login-page" class="hidden">
+        <div class="login-container">
+            <div class="login-box">
+                <h2 style="color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-lock"></i> لوحة الإدارة</h2>
+                <div class="form-group">
+                    <input type="text" id="admin-user" class="form-control" placeholder="اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="admin-pass" class="form-control" placeholder="كلمة المرور">
+                </div>
+                <button onclick="loginAdmin()" class="btn-submit" style="animation:none; font-size:1.2rem;">دخول</button>
+                <p id="login-err" style="color:red; margin-top:10px; display:none;">بيانات الدخول خاطئة!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ADMIN PANEL ================= -->
+    <div id="admin-panel-page" class="hidden">
+        <div class="admin-wrapper">
+            <div class="sidebar">
+                <h2>لوحة التحكم</h2>
+                <ul>
+                    <li onclick="showAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i> الإحصائيات</li>
+                    <li onclick="showAdminSection('orders')"><i class="fa-solid fa-box-open"></i> إدارة الطلبات</li>
+                    <li onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</li>
+                </ul>
+            </div>
+            <div class="admin-content">
+                <div id="admin-dashboard">
+                    <h2><i class="fa-solid fa-chart-pie"></i> إحصائيات المتجر</h2>
+                    <br>
+                    <div class="dashboard-cards">
+                        <div class="card card-new" onclick="filterOrders('قيد المراجعة')">
+                            <h4>طلبات جديدة</h4>
+                            <h3 id="stat-new">0</h3>
+                        </div>
+                        <div class="card card-all" onclick="filterOrders('all')">
+                            <h4>كل الطلبات</h4>
+                            <h3 id="stat-all">0</h3>
+                        </div>
+                        <div class="card card-confirmed" onclick="filterOrders('مؤكد')">
+                            <h4>طلبات مؤكدة</h4>
+                            <h3 id="stat-conf">0</h3>
+                        </div>
+                        <div class="card card-canceled" onclick="filterOrders('ملغي')">
+                            <h4>طلبات ملغية</h4>
+                            <h3 id="stat-canc">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-orders">
+                    <h2><i class="fa-solid fa-list"></i> قائمة الطلبات <span id="current-filter" style="font-size:1rem; color:gray;"></span></h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الرقم</th>
+                                    <th>التاريخ</th>
+                                    <th>العميل</th>
+                                    <th>الهاتف</th>
+                                    <th>الولاية</th>
+                                    <th>المنتج</th>
+                                    <th>الإجمالي</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <!-- Orders injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // --- 1. Data Initialization ---
+        const wilayas = [
+            "أدرار", "الشلف", "الأغواط", "أم البواقي", "باتنة", "بجاية", "بسكرة", "بشار", "البليدة", "البويرة",
+            "تمنراست", "تبسة", "تلمسان", "تيارت", "تيزي وزو", "الجزائر العاصمة", "الجلفة", "جيجل", "سطيف", "سعيدة",
+            "سكيكدة", "سيدي بلعباس", "عنابة", "قالمة", "قسنطينة", "المدية", "مستغانم", "المسيلة", "معسكر", "ورقلة",
+            "وهران", "البيض", "إليزي", "برج بوعريريج", "بومرداس", "الطارف", "تندوف", "تيسمسيلت", "الواد", "خنشلة",
+            "سوق أهراس", "تيبازة", "ميلة", "عين الدفلى", "النعامة", "عين تموشنت", "غرداية", "غليزان", "تيميمون", "برج باجي مختار",
+            "أولاد جلال", "بني عباس", "عين صالح", "عين قزام", "تقرت", "جانيت", "المغير", "المنيعة"
+        ];
+
+        // System State
+        let selectedColor = 'أسود';
+        let selectedSize = 'M';
+        const basePrice = 8500;
+        let orders = JSON.parse(localStorage.getItem('luxury_orders')) || [];
+
+        // Secret Admin Pass (Base64 for 'abobob123')
+        const SECRET = 'YWJvYm9iMTIz'; 
+
+        // --- 2. Landing Page Logic ---
+        function initLanding() {
+            const wilayaSelect = document.getElementById('cust-wilaya');
+            wilayas.forEach((w, index) => {
+                let opt = document.createElement('option');
+                opt.value = index + 1;
+                opt.text = `${index + 1} - ${w}`;
+                wilayaSelect.appendChild(opt);
+            });
+            wilayaSelect.value = 16; // Default: Algiers
+            calculateTotal();
+        }
+
+        function changeImage(el) {
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('main-product-img').src = el.src;
+        }
+
+        function selectColor(el, color) {
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedColor = color;
+        }
+
+        function selectSize(el, size) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedSize = size;
+        }
+
+        function calculateTotal() {
+            const wilayaCode = parseInt(document.getElementById('cust-wilaya').value);
+            const delivery = document.getElementById('cust-delivery').value;
+            
+            // Smart Shipping Logic Simulation
+            let shippingPrice = 600; // default North
+            if (wilayaCode > 40) shippingPrice = 1000; // Far South
+            if (delivery === 'desk') shippingPrice -= 200; // Discount for desk pickup
+
+            const total = basePrice + shippingPrice;
+
+            document.getElementById('sum-price').innerText = basePrice;
+            document.getElementById('sum-shipping').innerText = shippingPrice;
+            document.getElementById('sum-total').innerText = total;
+
+            return { shippingPrice, total };
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const calc = calculateTotal();
+            
+            const newOrder = {
+                id: 'ORD-' + Math.floor(Math.random() * 10000),
+                date: new Date().toLocaleDateString('ar-DZ'),
+                name: document.getElementById('cust-name').value,
+                phone: document.getElementById('cust-phone').value,
+                wilaya: wilayas[parseInt(document.getElementById('cust-wilaya').value) - 1],
+                address: document.getElementById('cust-address').value,
+                delivery: document.getElementById('cust-delivery').value === 'home' ? 'للمنزل' : 'للمكتب',
+                product: document.getElementById('product-name').innerText,
+                color: selectedColor,
+                size: selectedSize,
+                price: basePrice,
+                shipping: calc.shippingPrice,
+                total: calc.total,
+                status: 'قيد المراجعة'
+            };
+
+            orders.unshift(newOrder); // Add to beginning
+            localStorage.setItem('luxury_orders', JSON.stringify(orders));
+
+            alert('🎉 تم استلام طلبك بنجاح! سنتصل بك قريباً لتأكيد الطلب.');
+            e.target.reset();
+            calculateTotal();
+        }
+
+        // --- 3. Routing & Admin Logic ---
+        function checkRoute() {
+            const hash = window.location.hash;
+            if (hash === '#admino09') {
+                document.getElementById('landing-page').classList.add('hidden');
+                
+                if(sessionStorage.getItem('isAdminLoggedIn')) {
+                    document.getElementById('admin-login-page').classList.add('hidden');
+                    document.getElementById('admin-panel-page').classList.remove('hidden');
+                    loadAdminData();
+                } else {
+                    document.getElementById('admin-login-page').classList.remove('hidden');
+                    document.getElementById('admin-panel-page').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('landing-page').classList.remove('hidden');
+                document.getElementById('admin-login-page').classList.add('hidden');
+                document.getElementById('admin-panel-page').classList.add('hidden');
+                initLanding();
+            }
+        }
+
+        function loginAdmin() {
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+            
+            if (user === 'admin' && btoa(pass) === SECRET) {
+                sessionStorage.setItem('isAdminLoggedIn', 'true');
+                checkRoute();
+            } else {
+                document.getElementById('login-err').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            window.location.hash = '';
+        }
+
+        function showAdminSection(section) {
+            if(section === 'dashboard') {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                document.getElementById('admin-orders').classList.add('hidden'); // Simplified view
+            } else {
+                document.getElementById('admin-dashboard').classList.add('hidden');
+                document.getElementById('admin-orders').classList.remove('hidden');
+                filterOrders('all');
+            }
+        }
+
+        function loadAdminData() {
+            // Update Stats
+            document.getElementById('stat-all').innerText = orders.length;
+            document.getElementById('stat-new').innerText = orders.filter(o => o.status === 'قيد المراجعة').length;
+            document.getElementById('stat-conf').innerText = orders.filter(o => o.status === 'مؤكد').length;
+            document.getElementById('stat-canc').innerText = orders.filter(o => o.status === 'ملغي').length;
+            
+            showAdminSection('dashboard');
+            renderOrdersTable(orders);
+        }
+
+        function filterOrders(status) {
+            showAdminSection('orders');
+            let filtered = status === 'all' ? orders : orders.filter(o => o.status === status);
+            document.getElementById('current-filter').innerText = status === 'all' ? '(الكل)' : `(${status})`;
+            renderOrdersTable(filtered);
+        }
+
+        function renderOrdersTable(data) {
+            const tbody = document.getElementById('orders-tbody');
+            tbody.innerHTML = '';
+            
+            data.forEach((order, index) => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.date}</td>
+                    <td><b>${order.name}</b><br><small>${order.address}</small></td>
+                    <td dir="ltr">${order.phone}</td>
+                    <td>${order.wilaya}</td>
+                    <td>${order.product} <br><small>اللون: ${order.color} | المقاس: ${order.size}</small></td>
+                    <td>${order.total} د.ج</td>
+                    <td>
+                        <select class="status-select" style="background:${getStatusColor(order.status)}; color:#fff; border:none;" onchange="updateOrderStatus('${order.id}', this.value)">
+                            <option value="قيد المراجعة" ${order.status === 'قيد المراجعة' ? 'selected' : ''}>قيد المراجعة</option>
+                            <option value="مؤكد" ${order.status === 'مؤكد' ? 'selected' : ''}>مؤكد</option>
+                            <option value="ملغي" ${order.status === 'ملغي' ? 'selected' : ''}>ملغي</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getStatusColor(status) {
+            if(status === 'مؤكد') return 'var(--success)';
+            if(status === 'ملغي') return 'var(--danger)';
+            return '#17a2b8'; // قيد المراجعة
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            let orderIndex = orders.findIndex(o => o.id === orderId);
+            if(orderIndex > -1) {
+                orders[orderIndex].status = newStatus;
+                localStorage.setItem('luxury_orders', JSON.stringify(orders));
+                loadAdminData(); // Refresh stats and UI
+            }
+        }
+
+        // Initialize App
+        window.addEventListener('hashchange', checkRoute);
+        window.onload = checkRoute;
+
+    </script>
+</body>
+</html>
