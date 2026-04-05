@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- المتغيرات والتصميم الأساسي (نفسه لم يتغير) --- */
+        /* --- المتغيرات والتصميم الأساسي --- */
         :root {
             --primary: #1a1a1a;
             --gold: #d4af37;
@@ -196,8 +196,9 @@
                                 <label>نوع التوصيل</label>
                                 <select id="cust-delivery" class="form-control" onchange="calculateTotal()">
                                     <option value="home">توصيل للمنزل</option>
-                                    <option value="desk">استلام من المكتب (تخفيض)</option>
+                                    <option value="desk">استلام من المكتب (أرخص)</option>
                                 </select>
+                                <small id="shipping-warning" style="color: red; display: none; font-weight: bold; margin-top: 5px;">عذراً، الشحن غير متوفر لهذه الوجهة حالياً.</small>
                             </div>
 
                             <div class="checkout-summary">
@@ -206,7 +207,7 @@
                                 <div class="summary-row summary-total"><span>المجموع:</span><span><span id="sum-total">0</span> د.ج</span></div>
                             </div>
 
-                            <button type="submit" class="btn-submit">تأكيد الطلب الآن <i class="fa-solid fa-cart-shopping"></i></button>
+                            <button type="submit" id="submit-btn" class="btn-submit">تأكيد الطلب الآن <i class="fa-solid fa-cart-shopping"></i></button>
                         </form>
                     </div>
                 </div>
@@ -334,11 +335,12 @@
                     <input type="text" id="p-sizes" class="form-control" placeholder="اتركه فارغاً إن لم يوجد">
                 </div>
 
-                <hr style="margin:20px 0;">
-                <h4 style="margin-bottom: 10px;">أسعار الشحن (د.ج)</h4>
-                <div class="form-group"><label>شحن ولايات الشمال (1-40)</label><input type="number" id="p-ship-north" class="form-control" required value="600"></div>
-                <div class="form-group"><label>شحن ولايات الجنوب (41-58)</label><input type="number" id="p-ship-south" class="form-control" required value="1000"></div>
-                <div class="form-group"><label>قيمة التخفيض عند الاستلام من المكتب</label><input type="number" id="p-ship-discount" class="form-control" required value="200"></div>
+                <!-- تركنا هذه الحقول لعدم حذف أي شيء كما طلبت، لكن التسعيرة الفعلية الآن تعتمد على الجدول الرسمي المدمج -->
+                <div style="display:none;">
+                    <input type="number" id="p-ship-north" value="600">
+                    <input type="number" id="p-ship-south" value="1000">
+                    <input type="number" id="p-ship-discount" value="200">
+                </div>
                 
                 <button type="submit" class="btn-submit" style="animation:none; font-size:1.2rem;">حفظ المنتج</button>
             </form>
@@ -357,6 +359,68 @@
             "أولاد جلال","بني عباس","عين صالح","عين قزام","تقرت","جانيت","المغير","المنيعة"
         ];
 
+        // جدول أسعار الشحن الرسمي (المنزل، المكتب)
+        const shippingRates = [
+            { home: 1400, desk: 970 },  // 1 Adrar
+            { home: 750, desk: 520 },   // 2 Chlef
+            { home: 950, desk: 670 },   // 3 Laghouat
+            { home: 800, desk: 520 },   // 4 Oum El Bouaghi
+            { home: 800, desk: 520 },   // 5 Batna
+            { home: 800, desk: 520 },   // 6 Bejaia
+            { home: 950, desk: 670 },   // 7 Biskra
+            { home: 1100, desk: 720 },  // 8 Bechar
+            { home: 400, desk: 370 },   // 9 Blida
+            { home: 750, desk: 520 },   // 10 Bouira
+            { home: 1600, desk: 1120 }, // 11 Tamanrasset
+            { home: 850, desk: 520 },   // 12 Tebessa
+            { home: 850, desk: 570 },   // 13 Tlemcen
+            { home: 800, desk: 520 },   // 14 Tiaret
+            { home: 750, desk: 520 },   // 15 Tizi Ouzou
+            { home: 500, desk: 420 },   // 16 Alger
+            { home: 950, desk: 670 },   // 17 Djelfa
+            { home: 800, desk: 520 },   // 18 Jijel
+            { home: 750, desk: 520 },   // 19 Sétif
+            { home: 800, desk: 570 },   // 20 Saida
+            { home: 800, desk: 520 },   // 21 Skikda
+            { home: 800, desk: 520 },   // 22 Sidi Bel Abbès
+            { home: 800, desk: 520 },   // 23 Annaba
+            { home: 800, desk: 520 },   // 24 Guelma
+            { home: 800, desk: 520 },   // 25 Constantine
+            { home: 750, desk: 520 },   // 26 Medea
+            { home: 800, desk: 520 },   // 27 Mostaganem
+            { home: 850, desk: 570 },   // 28 M'Sila
+            { home: 800, desk: 520 },   // 29 Mascara
+            { home: 950, desk: 670 },   // 30 Ouargla
+            { home: 800, desk: 520 },   // 31 Oran
+            { home: 1100, desk: 670 },  // 32 El Bayadh
+            { home: 0, desk: 0 },       // 33 Illizi
+            { home: 750, desk: 520 },   // 34 Bordj Bou Arreridj
+            { home: 750, desk: 520 },   // 35 Boumerdes
+            { home: 800, desk: 520 },   // 36 El Tarf
+            { home: 0, desk: 0 },       // 37 Tindouf
+            { home: 800, desk: 520 },   // 38 Tissemsilt
+            { home: 950, desk: 670 },   // 39 El Oued
+            { home: 800, desk: 520 },   // 40 Khenchela
+            { home: 800, desk: 520 },   // 41 Souk Ahras
+            { home: 750, desk: 520 },   // 42 Tipaza
+            { home: 800, desk: 520 },   // 43 Mila
+            { home: 750, desk: 520 },   // 44 Ain Defla
+            { home: 1100, desk: 670 },  // 45 Naama
+            { home: 800, desk: 520 },   // 46 Ain Temouchent
+            { home: 950, desk: 670 },   // 47 Ghardaia
+            { home: 800, desk: 520 },   // 48 Relizane
+            { home: 1400, desk: 970 },  // 49 Timimoun
+            { home: 0, desk: 0 },       // 50 Bordj Badji Mokhtar
+            { home: 950, desk: 670 },   // 51 Ouled Djellal
+            { home: 1000, desk: 970 },  // 52 Béni Abbès
+            { home: 1600, desk: 0 },    // 53 In Salah
+            { home: 1600, desk: 0 },    // 54 In Guezzam
+            { home: 950, desk: 670 },   // 55 Touggourt
+            { home: 0, desk: 0 },       // 56 Djanet
+            { home: 950, desk: 0 },     // 57 M'Ghair
+            { home: 1000, desk: 0 }     // 58 Meniaa
+        ];
+
         // --- Database (LocalStorage) ---
         let orders = JSON.parse(localStorage.getItem('lux_orders')) || [];
         let products = JSON.parse(localStorage.getItem('lux_products')) || [];
@@ -368,7 +432,7 @@
         let selectedColor = '';
         let selectedSize = '';
 
-        // Default Data Initialization (if empty)
+        // Default Data Initialization
         if(products.length === 0) {
             products.push({
                 id: 'P-1', name: 'الساعة الفاخرة V8', desc: 'تصميم عصري وجذاب يناسب جميع الإطلالات.', price: 8500,
@@ -410,9 +474,9 @@
             const wSelect = document.getElementById('cust-wilaya');
             wSelect.innerHTML = '';
             wilayas.forEach((w, i) => { wSelect.innerHTML += `<option value="${i+1}">${i+1} - ${w}</option>`; });
-            wSelect.value = 16;
+            wSelect.value = 16; // Algiers default
 
-            // Load Active Product (First product for now)
+            // Load Active Product
             activeProduct = products[0];
             if(!activeProduct) return;
 
@@ -478,7 +542,6 @@
             el.classList.add('active');
             document.getElementById('main-product-img').src = el.src;
         }
-
         function selectColor(el, color) {
             document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
@@ -490,27 +553,57 @@
             selectedSize = size;
         }
 
+        // Logic لحساب الشحن من القائمة الرسمية الجديدة
         function calculateTotal() {
             if(!activeProduct) return;
-            const wilayaCode = parseInt(document.getElementById('cust-wilaya').value);
-            const delivery = document.getElementById('cust-delivery').value;
             
-            let shipPrice = wilayaCode > 40 ? parseInt(activeProduct.shipping.south) : parseInt(activeProduct.shipping.north);
-            if (delivery === 'desk') shipPrice -= parseInt(activeProduct.shipping.discount);
-            if(shipPrice < 0) shipPrice = 0;
+            const wilayaIndex = parseInt(document.getElementById('cust-wilaya').value) - 1;
+            const deliveryType = document.getElementById('cust-delivery').value; // 'home' or 'desk'
+            
+            const rates = shippingRates[wilayaIndex];
+            let shipPrice = (deliveryType === 'home') ? rates.home : rates.desk;
 
-            const total = parseInt(activeProduct.price) + shipPrice;
+            const submitBtn = document.getElementById('submit-btn');
+            const warningMsg = document.getElementById('shipping-warning');
 
-            document.getElementById('sum-price').innerText = activeProduct.price;
-            document.getElementById('sum-shipping').innerText = shipPrice;
-            document.getElementById('sum-total').innerText = total;
+            if (shipPrice === 0) {
+                // الشحن غير متوفر
+                document.getElementById('sum-price').innerText = activeProduct.price;
+                document.getElementById('sum-shipping').innerText = 'غير متوفر';
+                document.getElementById('sum-total').innerText = '---';
+                
+                warningMsg.style.display = 'block';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+                
+                return { shipPrice: 0, total: 0, available: false };
+            } else {
+                // الشحن متوفر
+                const total = parseInt(activeProduct.price) + shipPrice;
+                
+                document.getElementById('sum-price').innerText = activeProduct.price;
+                document.getElementById('sum-shipping').innerText = shipPrice;
+                document.getElementById('sum-total').innerText = total;
 
-            return { shipPrice, total };
+                warningMsg.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+
+                return { shipPrice, total, available: true };
+            }
         }
 
         function submitOrder(e) {
             e.preventDefault();
             const calc = calculateTotal();
+            
+            if(!calc.available) {
+                alert('عذراً، التوصيل غير متوفر للولاية المحددة أو لنوع التوصيل المختار. يرجى التعديل والمحاولة مرة أخرى.');
+                return;
+            }
+
             const newOrder = {
                 id: 'ORD-' + Math.floor(Math.random() * 10000),
                 date: new Date().toLocaleDateString('ar-DZ'),
@@ -526,7 +619,7 @@
 
             orders.unshift(newOrder);
             localStorage.setItem('lux_orders', JSON.stringify(orders));
-            alert('🎉 تم استلام طلبك بنجاح!');
+            alert('🎉 تم استلام طلبك بنجاح! سنتصل بك قريباً للتأكيد.');
             e.target.reset();
             calculateTotal();
         }
@@ -611,7 +704,6 @@
         }
         function closeProductModal() { document.getElementById('productModal').style.display = 'none'; }
 
-        // File to Base64 utility
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
@@ -629,13 +721,11 @@
             const shipSouth = document.getElementById('p-ship-south').value;
             const shipDiscount = document.getElementById('p-ship-discount').value;
 
-            // Handle Images
             let images = [];
             const files = document.getElementById('p-images').files;
             if(files.length > 0) {
                 for(let file of files) { images.push(await toBase64(file)); }
             } else {
-                // Keep old images if editing
                 let oldProd = products.find(p => p.id === id);
                 if(oldProd) images = oldProd.images;
             }
