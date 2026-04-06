@@ -77,6 +77,7 @@
             box-shadow: 0 10px 20px rgba(212,175,55,0.4); animation: gradientMove 3s ease infinite, pulse 2s infinite; transition: var(--transition);
         }
         .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(212,175,55,0.6); }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; animation: none; }
 
         @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
@@ -171,7 +172,7 @@
 
                     <div class="order-form">
                         <h3 style="margin-bottom: 15px; color: var(--primary);">استمارة الطلب</h3>
-                        <form id="checkout-form" onsubmit="submitOrder(event)">
+                        <form id="checkout-form" onsubmit="window.submitOrder(event)">
                             <div class="form-group">
                                 <label>الاسم الكامل</label>
                                 <input type="text" id="cust-name" class="form-control" required placeholder="أدخل اسمك الكامل">
@@ -182,7 +183,7 @@
                             </div>
                             <div class="form-group">
                                 <label>الولاية</label>
-                                <select id="cust-wilaya" class="form-control" required onchange="calculateTotal()"></select>
+                                <select id="cust-wilaya" class="form-control" required onchange="window.calculateTotal()"></select>
                             </div>
                             <div class="form-group">
                                 <label>البلدية / العنوان</label>
@@ -190,7 +191,7 @@
                             </div>
                             <div class="form-group">
                                 <label>نوع التوصيل</label>
-                                <select id="cust-delivery" class="form-control" onchange="calculateTotal()">
+                                <select id="cust-delivery" class="form-control" onchange="window.calculateTotal()">
                                     <option value="home">توصيل للمنزل</option>
                                     <option value="desk">استلام من المكتب (أرخص)</option>
                                 </select>
@@ -226,7 +227,7 @@
                 <h2 style="color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-lock"></i> لوحة الإدارة</h2>
                 <div class="form-group"><input type="text" id="admin-user" class="form-control" placeholder="اسم المستخدم"></div>
                 <div class="form-group"><input type="password" id="admin-pass" class="form-control" placeholder="كلمة المرور"></div>
-                <button onclick="loginAdmin()" class="btn-submit" style="animation:none; font-size:1.2rem;">دخول</button>
+                <button onclick="window.loginAdmin()" class="btn-submit" style="animation:none; font-size:1.2rem;">دخول</button>
                 <p id="login-err" style="color:red; margin-top:10px; display:none;">بيانات الدخول خاطئة!</p>
             </div>
         </div>
@@ -238,10 +239,10 @@
             <div class="sidebar">
                 <h2>لوحة التحكم</h2>
                 <ul>
-                    <li onclick="showAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i> الإحصائيات و الطلبات</li>
-                    <li onclick="showAdminSection('products')"><i class="fa-solid fa-box"></i> إدارة المنتجات</li>
-                    <li onclick="showAdminSection('content')"><i class="fa-solid fa-star"></i> التقييمات والإثباتات</li>
-                    <li onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</li>
+                    <li onclick="window.showAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i> الإحصائيات و الطلبات</li>
+                    <li onclick="window.showAdminSection('products')"><i class="fa-solid fa-box"></i> إدارة المنتجات</li>
+                    <li onclick="window.showAdminSection('content')"><i class="fa-solid fa-star"></i> التقييمات والإثباتات</li>
+                    <li onclick="window.logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</li>
                 </ul>
             </div>
             <div class="admin-content">
@@ -249,10 +250,10 @@
                 <div id="admin-dashboard" class="admin-section">
                     <h2><i class="fa-solid fa-chart-pie"></i> إحصائيات المتجر</h2><br>
                     <div class="dashboard-cards">
-                        <div class="card card-new" onclick="filterOrders('قيد المراجعة')"><h4>طلبات جديدة</h4><h3 id="stat-new">0</h3></div>
-                        <div class="card card-all" onclick="filterOrders('all')"><h4>كل الطلبات</h4><h3 id="stat-all">0</h3></div>
-                        <div class="card card-confirmed" onclick="filterOrders('مؤكد')"><h4>طلبات مؤكدة</h4><h3 id="stat-conf">0</h3></div>
-                        <div class="card card-canceled" onclick="filterOrders('ملغي')"><h4>طلبات ملغية</h4><h3 id="stat-canc">0</h3></div>
+                        <div class="card card-new" onclick="window.filterOrders('قيد المراجعة')"><h4>طلبات جديدة</h4><h3 id="stat-new">0</h3></div>
+                        <div class="card card-all" onclick="window.filterOrders('all')"><h4>كل الطلبات</h4><h3 id="stat-all">0</h3></div>
+                        <div class="card card-confirmed" onclick="window.filterOrders('مؤكد')"><h4>طلبات مؤكدة</h4><h3 id="stat-conf">0</h3></div>
+                        <div class="card card-canceled" onclick="window.filterOrders('ملغي')"><h4>طلبات ملغية</h4><h3 id="stat-canc">0</h3></div>
                     </div>
                     <h2><i class="fa-solid fa-list"></i> قائمة الطلبات <span id="current-filter" style="font-size:1rem; color:gray;"></span></h2>
                     <div class="table-responsive">
@@ -265,7 +266,7 @@
 
                 <div id="admin-products" class="admin-section hidden">
                     <h2><i class="fa-solid fa-box"></i> إدارة المنتجات</h2><br>
-                    <button class="btn-admin btn-add" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> إضافة منتج جديد</button>
+                    <button class="btn-admin btn-add" onclick="window.openProductModal()"><i class="fa-solid fa-plus"></i> إضافة منتج جديد</button>
                     <div class="table-responsive">
                         <table>
                             <thead><tr><th>الصورة</th><th>اسم المنتج</th><th>السعر</th><th>العمليات</th></tr></thead>
@@ -282,7 +283,7 @@
                         <input type="text" id="rev-name" class="form-control" placeholder="اسم العميل" style="margin-bottom:10px;">
                         <input type="number" id="rev-stars" class="form-control" placeholder="عدد النجوم (1-5)" min="1" max="5" style="margin-bottom:10px;">
                         <textarea id="rev-text" class="form-control" placeholder="التعليق" rows="3" style="margin-bottom:10px;"></textarea>
-                        <button class="btn-admin btn-add" onclick="addReview()">حفظ التقييم</button>
+                        <button class="btn-admin btn-add" onclick="window.addReview()">حفظ التقييم</button>
                         <hr><br>
                         <h4>التقييمات الحالية:</h4>
                         <ul id="admin-reviews-list" style="list-style:none; padding-top:10px;"></ul>
@@ -291,7 +292,7 @@
                     <div class="table-responsive">
                         <h3>رفع لقطات شاشة (Proofs)</h3><br>
                         <input type="file" id="proof-file" accept="image/*" class="form-control" style="margin-bottom:10px;">
-                        <button class="btn-admin btn-add" onclick="addProof()">رفع الصورة</button>
+                        <button class="btn-admin btn-add" onclick="window.addProof(event)">رفع الصورة</button>
                         <hr><br>
                         <h4>الصور الحالية:</h4>
                         <div class="proofs-grid" id="admin-proofs-grid" style="margin-top:15px;"></div>
@@ -305,9 +306,9 @@
     <!-- Product Modal Form -->
     <div id="productModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeProductModal()">&times;</span>
+            <span class="close" onclick="window.closeProductModal()">&times;</span>
             <h2 id="modal-title">إضافة منتج جديد</h2><br>
-            <form id="product-form" onsubmit="saveProduct(event)">
+            <form id="product-form" onsubmit="window.saveProduct(event)">
                 <input type="hidden" id="p-id">
                 <div class="form-group"><label>اسم المنتج</label><input type="text" id="p-name" class="form-control" required></div>
                 <div class="form-group"><label>الوصف</label><textarea id="p-desc" class="form-control" rows="3" required></textarea></div>
@@ -336,25 +337,29 @@
 
     <!-- ================= JAVASCRIPT & FIREBASE ================= -->
     <script type="module">
+        // استيراد مكتبات فايربيس (باستخدام روابط CDN لأننا في ملف HTML مباشر)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
         import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // =========================================================================
-        // ⚠️ ضع إعدادات فايربيس الخاصة بك هنا (firebaseConfig) ⚠️
-        // =========================================================================
+        // إعدادات مشروعك
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyD0yIvV9kyerbUi9udhjTdvdPckSTBluTk",
+            authDomain: "cdestok-marketplace.firebaseapp.com",
+            projectId: "cdestok-marketplace",
+            storageBucket: "cdestok-marketplace.firebasestorage.app",
+            messagingSenderId: "993053470339",
+            appId: "1:993053470339:web:0765d60a66f97d827d75b6",
+            measurementId: "G-DV4VE0K1SR"
         };
 
+        // التهيئة
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        const SECRET = 'YWJvYm9iMTIz'; 
+        // الثوابت
+        const SECRET = 'YWJvYm9iMTIz'; // الباسورد admin و abobob123
         const wilayas = [
             "أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار","البليدة","البويرة",
             "تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر العاصمة","الجلفة","جيجل","سطيف","سعيدة",
@@ -389,9 +394,9 @@
         let activeProduct = null;
         let selectedColor = '';
         let selectedSize = '';
+        let isDataLoaded = false;
 
-        // ================= IMAGE COMPRESSION FUNCTION =================
-        // دالة تقوم بضغط الصورة مع الحفاظ على الجودة العالية
+        // دالة ضغط الصور
         const compressImage = (file, maxWidth = 800, quality = 0.75) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -403,21 +408,15 @@
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
-
-                        // تصغير الأبعاد إذا كانت أكبر من الحد الأقصى مع الحفاظ على نسبة العرض/الطول
                         if (width > maxWidth) {
                             height = Math.round((height * maxWidth) / width);
                             width = maxWidth;
                         }
-
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-
-                        // التحويل إلى Base64 بصيغة JPEG لتقليل الحجم
-                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                        resolve(dataUrl);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
                     };
                     img.onerror = (err) => reject(err);
                 };
@@ -425,7 +424,7 @@
             });
         };
 
-        // ================= DATABASE FETCH =================
+        // جلب البيانات مرة واحدة
         async function fetchFromFirebase() {
             try {
                 const prodSnap = await getDocs(collection(db, "products"));
@@ -438,27 +437,28 @@
                 reviews = revSnap.docs.map(doc => doc.data());
 
                 const proofSnap = await getDocs(collection(db, "proofs"));
-                proofs = proofSnap.docs.map(doc => doc.data().image);
+                proofs = proofSnap.docs.map(doc => doc.data()); // حفظ ككائن للوصول للـ ID
 
                 if(products.length === 0) {
                     const defaultProduct = {
-                        id: 'P-1', name: 'الساعة الفاخرة V8', desc: 'تصميم عصري وجذاب يناسب جميع الإطلالات.', price: 8500,
+                        id: 'P-1', name: 'الساعة الفاخرة V8', desc: 'تصميم عصري وجذاب.', price: 8500,
                         images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'],
                         colors: ['أسود', 'فضي'], sizes: []
                     };
                     await setDoc(doc(db, "products", "P-1"), defaultProduct);
                     products.push(defaultProduct);
                 }
+                isDataLoaded = true;
             } catch (error) {
                 console.error("خطأ في جلب البيانات من فايربيس:", error);
+                alert("يرجى التأكد من تفعيل قواعد Firestore (Rules) إلى true");
             }
         }
 
         // ================= ROUTING =================
-        async function checkRoute() {
+        function renderRoute() {
             const hash = window.location.hash;
-            await fetchFromFirebase(); 
-
+            
             if (hash === '#admino09') {
                 document.getElementById('landing-page').classList.add('hidden');
                 if(sessionStorage.getItem('isAdmin')) {
@@ -467,6 +467,7 @@
                     loadAdminData();
                 } else {
                     document.getElementById('admin-login-page').classList.remove('hidden');
+                    document.getElementById('admin-panel-page').classList.add('hidden');
                 }
             } else {
                 document.getElementById('landing-page').classList.remove('hidden');
@@ -475,8 +476,16 @@
                 initLandingPage();
             }
         }
-        window.addEventListener('hashchange', checkRoute);
-        window.onload = checkRoute;
+
+        // التحميل المبدئي
+        window.onload = async () => {
+            await fetchFromFirebase();
+            renderRoute();
+        };
+
+        window.addEventListener('hashchange', () => {
+            if(isDataLoaded) renderRoute();
+        });
 
         // ================= LANDING PAGE =================
         function initLandingPage() {
@@ -501,7 +510,7 @@
             if(activeProduct.images && activeProduct.images.length > 0) {
                 mainImg.src = activeProduct.images[0];
                 activeProduct.images.forEach((img, idx) => {
-                    thumbContainer.innerHTML += `<img src="${img}" class="thumb ${idx===0?'active':''}" onclick="changeImage(this)">`;
+                    thumbContainer.innerHTML += `<img src="${img}" class="thumb ${idx===0?'active':''}" onclick="window.changeImage(this)">`;
                 });
             }
 
@@ -512,7 +521,7 @@
                 colorGroup.style.display = 'block';
                 selectedColor = activeProduct.colors[0];
                 activeProduct.colors.forEach((c, idx) => {
-                    colorsDiv.innerHTML += `<div class="color-btn ${idx===0?'active':''}" onclick="selectColor(this, '${c}')">${c}</div>`;
+                    colorsDiv.innerHTML += `<div class="color-btn ${idx===0?'active':''}" onclick="window.selectColor(this, '${c}')">${c}</div>`;
                 });
             } else { colorGroup.style.display = 'none'; selectedColor = 'لا يوجد'; }
 
@@ -523,7 +532,7 @@
                 sizeGroup.style.display = 'block';
                 selectedSize = activeProduct.sizes[0];
                 activeProduct.sizes.forEach((s, idx) => {
-                    sizesDiv.innerHTML += `<button type="button" class="size-btn ${idx===0?'active':''}" onclick="selectSize(this, '${s}')">${s}</button>`;
+                    sizesDiv.innerHTML += `<button type="button" class="size-btn ${idx===0?'active':''}" onclick="window.selectSize(this, '${s}')">${s}</button>`;
                 });
             } else { sizeGroup.style.display = 'none'; selectedSize = 'لا يوجد'; }
 
@@ -538,10 +547,10 @@
             proofDiv.innerHTML = '';
             if(proofs.length === 0) proofDiv.innerHTML = "<p style='text-align:center; width:100%'>لا توجد صور حالياً</p>";
             proofs.forEach(p => {
-                proofDiv.innerHTML += `<img src="${p}" class="proof-img">`;
+                proofDiv.innerHTML += `<img src="${p.image}" class="proof-img">`;
             });
 
-            calculateTotal();
+            window.calculateTotal();
         }
 
         window.changeImage = (el) => {
@@ -573,22 +582,22 @@
                 document.getElementById('sum-price').innerText = activeProduct.price;
                 document.getElementById('sum-shipping').innerText = 'غير متوفر';
                 document.getElementById('sum-total').innerText = '---';
-                warningMsg.style.display = 'block'; submitBtn.disabled = true; submitBtn.style.opacity = '0.5';
-                return { shipPrice: 0, total: 0, available: false };
+                warningMsg.style.display = 'block'; submitBtn.disabled = true;
+                return { available: false };
             } else {
                 const total = parseInt(activeProduct.price) + shipPrice;
                 document.getElementById('sum-price').innerText = activeProduct.price;
                 document.getElementById('sum-shipping').innerText = shipPrice;
                 document.getElementById('sum-total').innerText = total;
-                warningMsg.style.display = 'none'; submitBtn.disabled = false; submitBtn.style.opacity = '1';
-                return { shipPrice, total, available: true };
+                warningMsg.style.display = 'none'; submitBtn.disabled = false;
+                return { total, available: true };
             }
         };
 
         window.submitOrder = async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
-            const calc = calculateTotal();
+            const calc = window.calculateTotal();
             if(!calc.available) return alert('عذراً، التوصيل غير متوفر.');
 
             submitBtn.disabled = true;
@@ -613,10 +622,10 @@
                 orders.unshift(newOrder);
                 alert('🎉 تم استلام طلبك بنجاح! سنتصل بك قريباً للتأكيد.');
                 e.target.reset();
-                calculateTotal();
+                window.calculateTotal();
             } catch(err) {
                 console.error(err);
-                alert("حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً.");
+                alert("حدث خطأ أثناء الإرسال. تأكد من تفعيل قواعد Firestore.");
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'تأكيد الطلب الآن <i class="fa-solid fa-cart-shopping"></i>';
@@ -628,7 +637,8 @@
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
             if (user === 'admin' && btoa(pass) === SECRET) {
-                sessionStorage.setItem('isAdmin', 'true'); checkRoute();
+                sessionStorage.setItem('isAdmin', 'true'); 
+                renderRoute();
             } else { document.getElementById('login-err').style.display = 'block'; }
         };
         window.logout = () => { sessionStorage.removeItem('isAdmin'); window.location.hash = ''; };
@@ -637,8 +647,8 @@
             document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
             document.getElementById('admin-' + sectionId).classList.remove('hidden');
             if(sectionId === 'dashboard') loadAdminData();
-            if(sectionId === 'products') renderAdminProducts();
-            if(sectionId === 'content') renderAdminContent();
+            if(sectionId === 'products') window.renderAdminProducts();
+            if(sectionId === 'content') window.renderAdminContent();
         };
 
         function loadAdminData() {
@@ -646,7 +656,7 @@
             document.getElementById('stat-new').innerText = orders.filter(o => o.status === 'قيد المراجعة').length;
             document.getElementById('stat-conf').innerText = orders.filter(o => o.status === 'مؤكد').length;
             document.getElementById('stat-canc').innerText = orders.filter(o => o.status === 'ملغي').length;
-            filterOrders('all');
+            window.filterOrders('all');
         }
 
         window.filterOrders = (status) => {
@@ -662,7 +672,7 @@
                         <td dir="ltr">${o.phone}</td><td>${o.wilaya}</td>
                         <td>${o.product} <br><small>اللون: ${o.color} | المقاس: ${o.size}</small></td><td>${o.total} د.ج</td>
                         <td>
-                            <select class="status-select" style="background:${color}; color:#fff;" onchange="updateOrderStatus('${o.id}', this.value)">
+                            <select class="status-select" style="background:${color}; color:#fff;" onchange="window.updateOrderStatus('${o.id}', this.value)">
                                 <option value="قيد المراجعة" ${o.status === 'قيد المراجعة' ? 'selected' : ''}>قيد المراجعة</option>
                                 <option value="مؤكد" ${o.status === 'مؤكد' ? 'selected' : ''}>مؤكد</option>
                                 <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>ملغي</option>
@@ -679,11 +689,11 @@
                 try {
                     await updateDoc(doc(db, "orders", id), { status: status });
                     loadAdminData(); 
-                } catch(err) { alert("فشل تحديث الحالة في قاعدة البيانات"); }
+                } catch(err) { alert("فشل التحديث في القاعدة"); }
             }
         };
 
-        function renderAdminProducts() {
+        window.renderAdminProducts = () => {
             const tbody = document.getElementById('products-tbody');
             tbody.innerHTML = '';
             products.forEach(p => {
@@ -692,12 +702,12 @@
                     <tr>
                         <td>${img}</td><td>${p.name}</td><td>${p.price} د.ج</td>
                         <td>
-                            <button class="btn-admin btn-edit" onclick="editProduct('${p.id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-admin btn-delete" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-admin btn-edit" onclick="window.editProduct('${p.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-admin btn-delete" onclick="window.deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
             });
-        }
+        };
 
         window.openProductModal = () => {
             document.getElementById('product-form').reset();
@@ -726,7 +736,6 @@
             try {
                 if(files.length > 0) {
                     for(let file of files) { 
-                        // استدعاء دالة الضغط (عرض أقصى 800 بيكسل وجدودة 75%)
                         let compressedBase64 = await compressImage(file, 800, 0.75);
                         images.push(compressedBase64); 
                     }
@@ -736,20 +745,16 @@
                 }
 
                 const prodObj = { id, name, desc, price, images, colors, sizes };
-
-                // الحفظ في فايربيس
                 await setDoc(doc(db, "products", id), prodObj);
                 
                 let idx = products.findIndex(p => p.id === id);
                 if(idx > -1) products[idx] = prodObj; else products.push(prodObj);
                 
-                closeProductModal(); renderAdminProducts();
+                window.closeProductModal(); window.renderAdminProducts();
             } catch(err) {
-                console.error(err);
-                alert("حدث خطأ أثناء الحفظ أو ضغط الصورة.");
+                console.error(err); alert("خطأ أثناء الحفظ");
             } finally {
-                btnSave.disabled = false;
-                btnSave.innerText = "حفظ المنتج";
+                btnSave.disabled = false; btnSave.innerText = "حفظ المنتج";
             }
         };
 
@@ -767,24 +772,24 @@
         };
 
         window.deleteProduct = async (id) => {
-            if(confirm('هل أنت متأكد من حذف المنتج؟')) {
+            if(confirm('هل أنت متأكد من الحذف؟')) {
                 try {
                     await deleteDoc(doc(db, "products", id));
                     products = products.filter(p => p.id !== id);
-                    renderAdminProducts();
+                    window.renderAdminProducts();
                 } catch(err) { alert("حدث خطأ أثناء الحذف"); }
             }
         };
 
         // --- REVIEWS & PROOFS ---
-        function renderAdminContent() {
+        window.renderAdminContent = () => {
             const rList = document.getElementById('admin-reviews-list');
             rList.innerHTML = '';
             reviews.forEach(r => {
                 rList.innerHTML += `
                     <li style="background:#eee; padding:10px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between;">
                         <span><b>${r.name}</b> (${r.stars} نجوم): ${r.text}</span>
-                        <button class="btn-admin btn-delete" onclick="deleteReview('${r.id}')">حذف</button>
+                        <button class="btn-admin btn-delete" onclick="window.deleteReview('${r.id}')">حذف</button>
                     </li>`;
             });
 
@@ -793,11 +798,11 @@
             proofs.forEach((p, idx) => {
                 pGrid.innerHTML += `
                     <div style="position:relative;">
-                        <img src="${p}" style="width:100%; border-radius:8px;">
-                        <button class="btn-admin btn-delete" style="position:absolute; top:5px; right:5px;" onclick="deleteProof(${idx}, '${p.substring(0,20)}')">X</button>
+                        <img src="${p.image}" style="width:100%; border-radius:8px;">
+                        <button class="btn-admin btn-delete" style="position:absolute; top:5px; right:5px;" onclick="window.deleteProof('${p.id}')">X</button>
                     </div>`;
             });
-        }
+        };
 
         window.addReview = async () => {
             let n = document.getElementById('rev-name').value;
@@ -812,7 +817,7 @@
                 await setDoc(doc(db, "reviews", revId), newRev);
                 reviews.push(newRev);
                 document.getElementById('rev-name').value=''; document.getElementById('rev-stars').value=''; document.getElementById('rev-text').value='';
-                renderAdminContent();
+                window.renderAdminContent();
             } catch(e) { alert("خطأ في الحفظ"); }
         };
 
@@ -820,44 +825,38 @@
             try {
                 await deleteDoc(doc(db, "reviews", id));
                 reviews = reviews.filter(r => r.id !== id);
-                renderAdminContent();
+                window.renderAdminContent();
             } catch(e) { alert("خطأ في الحذف"); }
         };
 
-        window.addProof = async () => {
+        window.addProof = async (event) => {
             let file = document.getElementById('proof-file').files[0];
             if(!file) return alert('اختر صورة أولا');
             
             const btn = event.target;
-            btn.innerText = "جاري الضغط والرفع...";
+            btn.innerText = "جاري الرفع...";
             btn.disabled = true;
 
             try {
-                // ضغط الإثباتات بقيمة 600 بيكسل أقصى عرض للتقليل من المساحة المستهلكة
                 let compressedBase64 = await compressImage(file, 600, 0.7);
                 const proofId = 'PRF-' + Date.now();
-                await setDoc(doc(db, "proofs", proofId), { id: proofId, image: compressedBase64 });
-                proofs.push(compressedBase64);
+                const newProof = { id: proofId, image: compressedBase64 };
+                await setDoc(doc(db, "proofs", proofId), newProof);
+                proofs.push(newProof);
                 document.getElementById('proof-file').value = '';
-                renderAdminContent();
-            } catch(e) { 
-                console.error(e);
-                alert("حدث خطأ أثناء رفع الصورة."); 
-            } finally {
-                btn.innerText = "رفع الصورة";
-                btn.disabled = false;
-            }
+                window.renderAdminContent();
+            } catch(e) { alert("حدث خطأ أثناء الرفع."); } 
+            finally { btn.innerText = "رفع الصورة"; btn.disabled = false; }
         };
 
-        window.deleteProof = async (idx, shortId) => {
-            try {
-                const snap = await getDocs(collection(db, "proofs"));
-                const docToDelete = snap.docs.find(d => d.data().image.startsWith(shortId));
-                if(docToDelete) await deleteDoc(doc(db, "proofs", docToDelete.id));
-                
-                proofs.splice(idx, 1);
-                renderAdminContent();
-            } catch(e) { alert("خطأ في الحذف"); }
+        window.deleteProof = async (id) => {
+            if(confirm("هل تريد حذف الصورة؟")) {
+                try {
+                    await deleteDoc(doc(db, "proofs", id));
+                    proofs = proofs.filter(p => p.id !== id);
+                    window.renderAdminContent();
+                } catch(e) { alert("خطأ في الحذف"); }
+            }
         };
     </script>
 </body>
