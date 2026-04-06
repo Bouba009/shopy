@@ -147,17 +147,13 @@
 
         <div class="container">
             <div class="hero-section">
-                <!-- Product Gallery -->
                 <div class="product-gallery">
                     <div class="golden-frame">
                         <img id="main-product-img" src="" alt="Product" class="main-img">
                     </div>
-                    <div class="thumbnails" id="product-thumbnails">
-                        <!-- Thumbnails injected by JS -->
-                    </div>
+                    <div class="thumbnails" id="product-thumbnails"></div>
                 </div>
 
-                <!-- Product Info & Form -->
                 <div class="product-info">
                     <h2 class="product-title" id="product-name">جاري التحميل...</h2>
                     <p class="product-desc" id="product-desc"></p>
@@ -250,7 +246,6 @@
             </div>
             <div class="admin-content">
                 
-                <!-- Dashboard & Orders -->
                 <div id="admin-dashboard" class="admin-section">
                     <h2><i class="fa-solid fa-chart-pie"></i> إحصائيات المتجر</h2><br>
                     <div class="dashboard-cards">
@@ -268,7 +263,6 @@
                     </div>
                 </div>
 
-                <!-- Products Management -->
                 <div id="admin-products" class="admin-section hidden">
                     <h2><i class="fa-solid fa-box"></i> إدارة المنتجات</h2><br>
                     <button class="btn-admin btn-add" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> إضافة منتج جديد</button>
@@ -280,7 +274,6 @@
                     </div>
                 </div>
 
-                <!-- Extra Content Management -->
                 <div id="admin-content" class="admin-section hidden">
                     <h2><i class="fa-solid fa-star"></i> إدارة التقييمات والإثباتات</h2><br>
                     
@@ -323,6 +316,7 @@
                 <div class="form-group">
                     <label>رفع صور المنتج (اختر عدة صور)</label>
                     <input type="file" id="p-images" accept="image/*" multiple class="form-control">
+                    <small style="color: green; font-weight: bold;">يتم ضغط الصور تلقائياً لضمان سرعة الرفع.</small>
                     <small>الصورة الأولى ستكون الرئيسية. اتركها فارغة إذا كنت تعدل ولا تريد تغيير الصور.</small>
                 </div>
 
@@ -334,22 +328,33 @@
                     <label>المقاسات المتاحة (افصل بينها بفاصلة , مثلا: S,M,L,XL)</label>
                     <input type="text" id="p-sizes" class="form-control" placeholder="اتركه فارغاً إن لم يوجد">
                 </div>
-
-                <!-- تركنا هذه الحقول لعدم حذف أي شيء كما طلبت، لكن التسعيرة الفعلية الآن تعتمد على الجدول الرسمي المدمج -->
-                <div style="display:none;">
-                    <input type="number" id="p-ship-north" value="600">
-                    <input type="number" id="p-ship-south" value="1000">
-                    <input type="number" id="p-ship-discount" value="200">
-                </div>
                 
-                <button type="submit" class="btn-submit" style="animation:none; font-size:1.2rem;">حفظ المنتج</button>
+                <button type="submit" id="btn-save-product" class="btn-submit" style="animation:none; font-size:1.2rem;">حفظ المنتج</button>
             </form>
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT ================= -->
-    <script>
-        const SECRET = 'YWJvYm9iMTIz'; // Base64 for abobob123
+    <!-- ================= JAVASCRIPT & FIREBASE ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // =========================================================================
+        // ⚠️ ضع إعدادات فايربيس الخاصة بك هنا (firebaseConfig) ⚠️
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const SECRET = 'YWJvYm9iMTIz'; 
         const wilayas = [
             "أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار","البليدة","البويرة",
             "تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر العاصمة","الجلفة","جيجل","سطيف","سعيدة",
@@ -358,97 +363,102 @@
             "سوق أهراس","تيبازة","ميلة","عين الدفلى","النعامة","عين تموشنت","غرداية","غليزان","تيميمون","برج باجي مختار",
             "أولاد جلال","بني عباس","عين صالح","عين قزام","تقرت","جانيت","المغير","المنيعة"
         ];
-
-        // جدول أسعار الشحن الرسمي (المنزل، المكتب)
+        
         const shippingRates = [
-            { home: 1400, desk: 970 },  // 1 Adrar
-            { home: 750, desk: 520 },   // 2 Chlef
-            { home: 950, desk: 670 },   // 3 Laghouat
-            { home: 800, desk: 520 },   // 4 Oum El Bouaghi
-            { home: 800, desk: 520 },   // 5 Batna
-            { home: 800, desk: 520 },   // 6 Bejaia
-            { home: 950, desk: 670 },   // 7 Biskra
-            { home: 1100, desk: 720 },  // 8 Bechar
-            { home: 400, desk: 370 },   // 9 Blida
-            { home: 750, desk: 520 },   // 10 Bouira
-            { home: 1600, desk: 1120 }, // 11 Tamanrasset
-            { home: 850, desk: 520 },   // 12 Tebessa
-            { home: 850, desk: 570 },   // 13 Tlemcen
-            { home: 800, desk: 520 },   // 14 Tiaret
-            { home: 750, desk: 520 },   // 15 Tizi Ouzou
-            { home: 500, desk: 420 },   // 16 Alger
-            { home: 950, desk: 670 },   // 17 Djelfa
-            { home: 800, desk: 520 },   // 18 Jijel
-            { home: 750, desk: 520 },   // 19 Sétif
-            { home: 800, desk: 570 },   // 20 Saida
-            { home: 800, desk: 520 },   // 21 Skikda
-            { home: 800, desk: 520 },   // 22 Sidi Bel Abbès
-            { home: 800, desk: 520 },   // 23 Annaba
-            { home: 800, desk: 520 },   // 24 Guelma
-            { home: 800, desk: 520 },   // 25 Constantine
-            { home: 750, desk: 520 },   // 26 Medea
-            { home: 800, desk: 520 },   // 27 Mostaganem
-            { home: 850, desk: 570 },   // 28 M'Sila
-            { home: 800, desk: 520 },   // 29 Mascara
-            { home: 950, desk: 670 },   // 30 Ouargla
-            { home: 800, desk: 520 },   // 31 Oran
-            { home: 1100, desk: 670 },  // 32 El Bayadh
-            { home: 0, desk: 0 },       // 33 Illizi
-            { home: 750, desk: 520 },   // 34 Bordj Bou Arreridj
-            { home: 750, desk: 520 },   // 35 Boumerdes
-            { home: 800, desk: 520 },   // 36 El Tarf
-            { home: 0, desk: 0 },       // 37 Tindouf
-            { home: 800, desk: 520 },   // 38 Tissemsilt
-            { home: 950, desk: 670 },   // 39 El Oued
-            { home: 800, desk: 520 },   // 40 Khenchela
-            { home: 800, desk: 520 },   // 41 Souk Ahras
-            { home: 750, desk: 520 },   // 42 Tipaza
-            { home: 800, desk: 520 },   // 43 Mila
-            { home: 750, desk: 520 },   // 44 Ain Defla
-            { home: 1100, desk: 670 },  // 45 Naama
-            { home: 800, desk: 520 },   // 46 Ain Temouchent
-            { home: 950, desk: 670 },   // 47 Ghardaia
-            { home: 800, desk: 520 },   // 48 Relizane
-            { home: 1400, desk: 970 },  // 49 Timimoun
-            { home: 0, desk: 0 },       // 50 Bordj Badji Mokhtar
-            { home: 950, desk: 670 },   // 51 Ouled Djellal
-            { home: 1000, desk: 970 },  // 52 Béni Abbès
-            { home: 1600, desk: 0 },    // 53 In Salah
-            { home: 1600, desk: 0 },    // 54 In Guezzam
-            { home: 950, desk: 670 },   // 55 Touggourt
-            { home: 0, desk: 0 },       // 56 Djanet
-            { home: 950, desk: 0 },     // 57 M'Ghair
-            { home: 1000, desk: 0 }     // 58 Meniaa
+            { home: 1400, desk: 970 }, { home: 750, desk: 520 }, { home: 950, desk: 670 }, { home: 800, desk: 520 },
+            { home: 800, desk: 520 }, { home: 800, desk: 520 }, { home: 950, desk: 670 }, { home: 1100, desk: 720 },
+            { home: 400, desk: 370 }, { home: 750, desk: 520 }, { home: 1600, desk: 1120 }, { home: 850, desk: 520 },
+            { home: 850, desk: 570 }, { home: 800, desk: 520 }, { home: 750, desk: 520 }, { home: 500, desk: 420 },
+            { home: 950, desk: 670 }, { home: 800, desk: 520 }, { home: 750, desk: 520 }, { home: 800, desk: 570 },
+            { home: 800, desk: 520 }, { home: 800, desk: 520 }, { home: 800, desk: 520 }, { home: 800, desk: 520 },
+            { home: 800, desk: 520 }, { home: 750, desk: 520 }, { home: 800, desk: 520 }, { home: 850, desk: 570 },
+            { home: 800, desk: 520 }, { home: 950, desk: 670 }, { home: 800, desk: 520 }, { home: 1100, desk: 670 },
+            { home: 0, desk: 0 }, { home: 750, desk: 520 }, { home: 750, desk: 520 }, { home: 800, desk: 520 },
+            { home: 0, desk: 0 }, { home: 800, desk: 520 }, { home: 950, desk: 670 }, { home: 800, desk: 520 },
+            { home: 800, desk: 520 }, { home: 750, desk: 520 }, { home: 800, desk: 520 }, { home: 750, desk: 520 },
+            { home: 1100, desk: 670 }, { home: 800, desk: 520 }, { home: 950, desk: 670 }, { home: 800, desk: 520 },
+            { home: 1400, desk: 970 }, { home: 0, desk: 0 }, { home: 950, desk: 670 }, { home: 1000, desk: 970 },
+            { home: 1600, desk: 0 }, { home: 1600, desk: 0 }, { home: 950, desk: 670 }, { home: 0, desk: 0 },
+            { home: 950, desk: 0 }, { home: 1000, desk: 0 }
         ];
 
-        // --- Database (LocalStorage) ---
-        let orders = JSON.parse(localStorage.getItem('lux_orders')) || [];
-        let products = JSON.parse(localStorage.getItem('lux_products')) || [];
-        let reviews = JSON.parse(localStorage.getItem('lux_reviews')) || [];
-        let proofs = JSON.parse(localStorage.getItem('lux_proofs')) || [];
-
-        // Active Product State (Landing Page)
+        let orders = [];
+        let products = [];
+        let reviews = [];
+        let proofs = [];
         let activeProduct = null;
         let selectedColor = '';
         let selectedSize = '';
 
-        // Default Data Initialization
-        if(products.length === 0) {
-            products.push({
-                id: 'P-1', name: 'الساعة الفاخرة V8', desc: 'تصميم عصري وجذاب يناسب جميع الإطلالات.', price: 8500,
-                images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80'],
-                colors: ['أسود', 'فضي', 'ذهبي'], sizes: [], shipping: { north: 600, south: 1000, discount: 200 }
+        // ================= IMAGE COMPRESSION FUNCTION =================
+        // دالة تقوم بضغط الصورة مع الحفاظ على الجودة العالية
+        const compressImage = (file, maxWidth = 800, quality = 0.75) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // تصغير الأبعاد إذا كانت أكبر من الحد الأقصى مع الحفاظ على نسبة العرض/الطول
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // التحويل إلى Base64 بصيغة JPEG لتقليل الحجم
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (error) => reject(error);
             });
-            localStorage.setItem('lux_products', JSON.stringify(products));
-        }
-        if(reviews.length === 0) {
-            reviews.push({ id: 1, name: 'أحمد من الجزائر', stars: 5, text: '"منتج ممتاز جداً والتوصيل كان سريعاً في يومين فقط. شكراً لكم!"' });
-            localStorage.setItem('lux_reviews', JSON.stringify(reviews));
+        };
+
+        // ================= DATABASE FETCH =================
+        async function fetchFromFirebase() {
+            try {
+                const prodSnap = await getDocs(collection(db, "products"));
+                products = prodSnap.docs.map(doc => doc.data());
+
+                const ordSnap = await getDocs(collection(db, "orders"));
+                orders = ordSnap.docs.map(doc => doc.data()).sort((a, b) => b.timestamp - a.timestamp);
+
+                const revSnap = await getDocs(collection(db, "reviews"));
+                reviews = revSnap.docs.map(doc => doc.data());
+
+                const proofSnap = await getDocs(collection(db, "proofs"));
+                proofs = proofSnap.docs.map(doc => doc.data().image);
+
+                if(products.length === 0) {
+                    const defaultProduct = {
+                        id: 'P-1', name: 'الساعة الفاخرة V8', desc: 'تصميم عصري وجذاب يناسب جميع الإطلالات.', price: 8500,
+                        images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'],
+                        colors: ['أسود', 'فضي'], sizes: []
+                    };
+                    await setDoc(doc(db, "products", "P-1"), defaultProduct);
+                    products.push(defaultProduct);
+                }
+            } catch (error) {
+                console.error("خطأ في جلب البيانات من فايربيس:", error);
+            }
         }
 
         // ================= ROUTING =================
-        function checkRoute() {
+        async function checkRoute() {
             const hash = window.location.hash;
+            await fetchFromFirebase(); 
+
             if (hash === '#admino09') {
                 document.getElementById('landing-page').classList.add('hidden');
                 if(sessionStorage.getItem('isAdmin')) {
@@ -468,34 +478,33 @@
         window.addEventListener('hashchange', checkRoute);
         window.onload = checkRoute;
 
-        // ================= LANDING PAGE LOGIC =================
+        // ================= LANDING PAGE =================
         function initLandingPage() {
-            // Populate Wilayas
             const wSelect = document.getElementById('cust-wilaya');
             wSelect.innerHTML = '';
             wilayas.forEach((w, i) => { wSelect.innerHTML += `<option value="${i+1}">${i+1} - ${w}</option>`; });
-            wSelect.value = 16; // Algiers default
+            wSelect.value = 16; 
 
-            // Load Active Product
             activeProduct = products[0];
-            if(!activeProduct) return;
+            if(!activeProduct) {
+                document.getElementById('product-name').innerText = "لا يوجد منتجات";
+                return;
+            }
 
             document.getElementById('product-name').innerText = activeProduct.name;
             document.getElementById('product-desc').innerText = activeProduct.desc;
             document.getElementById('product-price').innerText = activeProduct.price;
 
-            // Load Images
             const mainImg = document.getElementById('main-product-img');
             const thumbContainer = document.getElementById('product-thumbnails');
             thumbContainer.innerHTML = '';
-            if(activeProduct.images.length > 0) {
+            if(activeProduct.images && activeProduct.images.length > 0) {
                 mainImg.src = activeProduct.images[0];
                 activeProduct.images.forEach((img, idx) => {
                     thumbContainer.innerHTML += `<img src="${img}" class="thumb ${idx===0?'active':''}" onclick="changeImage(this)">`;
                 });
             }
 
-            // Load Colors
             const colorGroup = document.getElementById('colors-group');
             const colorsDiv = document.getElementById('product-colors');
             colorsDiv.innerHTML = '';
@@ -507,7 +516,6 @@
                 });
             } else { colorGroup.style.display = 'none'; selectedColor = 'لا يوجد'; }
 
-            // Load Sizes
             const sizeGroup = document.getElementById('sizes-group');
             const sizesDiv = document.getElementById('product-sizes');
             sizesDiv.innerHTML = '';
@@ -519,7 +527,6 @@
                 });
             } else { sizeGroup.style.display = 'none'; selectedSize = 'لا يوجد'; }
 
-            // Load Reviews & Proofs
             const revDiv = document.getElementById('public-reviews');
             revDiv.innerHTML = '';
             reviews.forEach(r => {
@@ -537,75 +544,59 @@
             calculateTotal();
         }
 
-        function changeImage(el) {
+        window.changeImage = (el) => {
             document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             document.getElementById('main-product-img').src = el.src;
-        }
-        function selectColor(el, color) {
+        };
+        window.selectColor = (el, color) => {
             document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             selectedColor = color;
-        }
-        function selectSize(el, size) {
+        };
+        window.selectSize = (el, size) => {
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             selectedSize = size;
-        }
+        };
 
-        // Logic لحساب الشحن من القائمة الرسمية الجديدة
-        function calculateTotal() {
+        window.calculateTotal = () => {
             if(!activeProduct) return;
-            
             const wilayaIndex = parseInt(document.getElementById('cust-wilaya').value) - 1;
-            const deliveryType = document.getElementById('cust-delivery').value; // 'home' or 'desk'
-            
+            const deliveryType = document.getElementById('cust-delivery').value;
             const rates = shippingRates[wilayaIndex];
             let shipPrice = (deliveryType === 'home') ? rates.home : rates.desk;
-
             const submitBtn = document.getElementById('submit-btn');
             const warningMsg = document.getElementById('shipping-warning');
 
             if (shipPrice === 0) {
-                // الشحن غير متوفر
                 document.getElementById('sum-price').innerText = activeProduct.price;
                 document.getElementById('sum-shipping').innerText = 'غير متوفر';
                 document.getElementById('sum-total').innerText = '---';
-                
-                warningMsg.style.display = 'block';
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.5';
-                submitBtn.style.cursor = 'not-allowed';
-                
+                warningMsg.style.display = 'block'; submitBtn.disabled = true; submitBtn.style.opacity = '0.5';
                 return { shipPrice: 0, total: 0, available: false };
             } else {
-                // الشحن متوفر
                 const total = parseInt(activeProduct.price) + shipPrice;
-                
                 document.getElementById('sum-price').innerText = activeProduct.price;
                 document.getElementById('sum-shipping').innerText = shipPrice;
                 document.getElementById('sum-total').innerText = total;
-
-                warningMsg.style.display = 'none';
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.cursor = 'pointer';
-
+                warningMsg.style.display = 'none'; submitBtn.disabled = false; submitBtn.style.opacity = '1';
                 return { shipPrice, total, available: true };
             }
-        }
+        };
 
-        function submitOrder(e) {
+        window.submitOrder = async (e) => {
             e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
             const calc = calculateTotal();
-            
-            if(!calc.available) {
-                alert('عذراً، التوصيل غير متوفر للولاية المحددة أو لنوع التوصيل المختار. يرجى التعديل والمحاولة مرة أخرى.');
-                return;
-            }
+            if(!calc.available) return alert('عذراً، التوصيل غير متوفر.');
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "جاري الإرسال...";
 
             const newOrder = {
-                id: 'ORD-' + Math.floor(Math.random() * 10000),
+                id: 'ORD-' + Math.floor(Math.random() * 100000),
+                timestamp: Date.now(),
                 date: new Date().toLocaleDateString('ar-DZ'),
                 name: document.getElementById('cust-name').value,
                 phone: document.getElementById('cust-phone').value,
@@ -617,31 +608,38 @@
                 total: calc.total, status: 'قيد المراجعة'
             };
 
-            orders.unshift(newOrder);
-            localStorage.setItem('lux_orders', JSON.stringify(orders));
-            alert('🎉 تم استلام طلبك بنجاح! سنتصل بك قريباً للتأكيد.');
-            e.target.reset();
-            calculateTotal();
-        }
+            try {
+                await setDoc(doc(db, "orders", newOrder.id), newOrder);
+                orders.unshift(newOrder);
+                alert('🎉 تم استلام طلبك بنجاح! سنتصل بك قريباً للتأكيد.');
+                e.target.reset();
+                calculateTotal();
+            } catch(err) {
+                console.error(err);
+                alert("حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'تأكيد الطلب الآن <i class="fa-solid fa-cart-shopping"></i>';
+            }
+        };
 
         // ================= ADMIN LOGIC =================
-        function loginAdmin() {
+        window.loginAdmin = () => {
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
             if (user === 'admin' && btoa(pass) === SECRET) {
                 sessionStorage.setItem('isAdmin', 'true'); checkRoute();
             } else { document.getElementById('login-err').style.display = 'block'; }
-        }
+        };
+        window.logout = () => { sessionStorage.removeItem('isAdmin'); window.location.hash = ''; };
 
-        function logout() { sessionStorage.removeItem('isAdmin'); window.location.hash = ''; }
-
-        function showAdminSection(sectionId) {
+        window.showAdminSection = (sectionId) => {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
             document.getElementById('admin-' + sectionId).classList.remove('hidden');
             if(sectionId === 'dashboard') loadAdminData();
             if(sectionId === 'products') renderAdminProducts();
             if(sectionId === 'content') renderAdminContent();
-        }
+        };
 
         function loadAdminData() {
             document.getElementById('stat-all').innerText = orders.length;
@@ -651,7 +649,7 @@
             filterOrders('all');
         }
 
-        function filterOrders(status) {
+        window.filterOrders = (status) => {
             let filtered = status === 'all' ? orders : orders.filter(o => o.status === status);
             document.getElementById('current-filter').innerText = status === 'all' ? '(الكل)' : `(${status})`;
             const tbody = document.getElementById('orders-tbody');
@@ -672,19 +670,24 @@
                         </td>
                     </tr>`;
             });
-        }
+        };
 
-        function updateOrderStatus(id, status) {
+        window.updateOrderStatus = async (id, status) => {
             let idx = orders.findIndex(o => o.id === id);
-            if(idx > -1) { orders[idx].status = status; localStorage.setItem('lux_orders', JSON.stringify(orders)); loadAdminData(); }
-        }
+            if(idx > -1) { 
+                orders[idx].status = status; 
+                try {
+                    await updateDoc(doc(db, "orders", id), { status: status });
+                    loadAdminData(); 
+                } catch(err) { alert("فشل تحديث الحالة في قاعدة البيانات"); }
+            }
+        };
 
-        // --- PRODUCT MANAGEMENT ---
         function renderAdminProducts() {
             const tbody = document.getElementById('products-tbody');
             tbody.innerHTML = '';
             products.forEach(p => {
-                let img = p.images.length > 0 ? `<img src="${p.images[0]}" width="50" style="border-radius:5px;">` : 'لا توجد';
+                let img = (p.images && p.images.length > 0) ? `<img src="${p.images[0]}" width="50" style="border-radius:5px;">` : 'لا توجد';
                 tbody.innerHTML += `
                     <tr>
                         <td>${img}</td><td>${p.name}</td><td>${p.price} د.ج</td>
@@ -696,58 +699,61 @@
             });
         }
 
-        function openProductModal() {
+        window.openProductModal = () => {
             document.getElementById('product-form').reset();
             document.getElementById('p-id').value = '';
             document.getElementById('modal-title').innerText = 'إضافة منتج جديد';
             document.getElementById('productModal').style.display = 'block';
-        }
-        function closeProductModal() { document.getElementById('productModal').style.display = 'none'; }
+        };
+        window.closeProductModal = () => { document.getElementById('productModal').style.display = 'none'; };
 
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
-        });
-
-        async function saveProduct(e) {
+        window.saveProduct = async (e) => {
             e.preventDefault();
+            const btnSave = document.getElementById('btn-save-product');
+            btnSave.disabled = true;
+            btnSave.innerText = "جاري الحفظ والضغط...";
+
             const id = document.getElementById('p-id').value || 'P-' + Date.now();
             const name = document.getElementById('p-name').value;
             const desc = document.getElementById('p-desc').value;
             const price = document.getElementById('p-price').value;
             const colors = document.getElementById('p-colors').value.split(',').map(s=>s.trim()).filter(s=>s);
             const sizes = document.getElementById('p-sizes').value.split(',').map(s=>s.trim()).filter(s=>s);
-            const shipNorth = document.getElementById('p-ship-north').value;
-            const shipSouth = document.getElementById('p-ship-south').value;
-            const shipDiscount = document.getElementById('p-ship-discount').value;
 
             let images = [];
             const files = document.getElementById('p-images').files;
-            if(files.length > 0) {
-                for(let file of files) { images.push(await toBase64(file)); }
-            } else {
-                let oldProd = products.find(p => p.id === id);
-                if(oldProd) images = oldProd.images;
-            }
-
-            const prodObj = {
-                id, name, desc, price, images, colors, sizes,
-                shipping: { north: shipNorth, south: shipSouth, discount: shipDiscount }
-            };
-
-            let idx = products.findIndex(p => p.id === id);
-            if(idx > -1) products[idx] = prodObj;
-            else products.push(prodObj);
-
+            
             try {
-                localStorage.setItem('lux_products', JSON.stringify(products));
+                if(files.length > 0) {
+                    for(let file of files) { 
+                        // استدعاء دالة الضغط (عرض أقصى 800 بيكسل وجدودة 75%)
+                        let compressedBase64 = await compressImage(file, 800, 0.75);
+                        images.push(compressedBase64); 
+                    }
+                } else {
+                    let oldProd = products.find(p => p.id === id);
+                    if(oldProd) images = oldProd.images || [];
+                }
+
+                const prodObj = { id, name, desc, price, images, colors, sizes };
+
+                // الحفظ في فايربيس
+                await setDoc(doc(db, "products", id), prodObj);
+                
+                let idx = products.findIndex(p => p.id === id);
+                if(idx > -1) products[idx] = prodObj; else products.push(prodObj);
+                
                 closeProductModal(); renderAdminProducts();
             } catch(err) {
-                alert("خطأ: مساحة التخزين ممتلئة بسبب حجم الصور الكبير. حاول استخدام صور بحجم أصغر.");
+                console.error(err);
+                alert("حدث خطأ أثناء الحفظ أو ضغط الصورة.");
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerText = "حفظ المنتج";
             }
-        }
+        };
 
-        function editProduct(id) {
+        window.editProduct = (id) => {
             let p = products.find(x => x.id === id);
             if(!p) return;
             document.getElementById('p-id').value = p.id;
@@ -756,22 +762,21 @@
             document.getElementById('p-price').value = p.price;
             document.getElementById('p-colors').value = (p.colors || []).join(', ');
             document.getElementById('p-sizes').value = (p.sizes || []).join(', ');
-            document.getElementById('p-ship-north').value = p.shipping.north;
-            document.getElementById('p-ship-south').value = p.shipping.south;
-            document.getElementById('p-ship-discount').value = p.shipping.discount;
             document.getElementById('modal-title').innerText = 'تعديل المنتج';
             document.getElementById('productModal').style.display = 'block';
-        }
+        };
 
-        function deleteProduct(id) {
+        window.deleteProduct = async (id) => {
             if(confirm('هل أنت متأكد من حذف المنتج؟')) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('lux_products', JSON.stringify(products));
-                renderAdminProducts();
+                try {
+                    await deleteDoc(doc(db, "products", id));
+                    products = products.filter(p => p.id !== id);
+                    renderAdminProducts();
+                } catch(err) { alert("حدث خطأ أثناء الحذف"); }
             }
-        }
+        };
 
-        // --- REVIEWS & PROOFS MANAGEMENT ---
+        // --- REVIEWS & PROOFS ---
         function renderAdminContent() {
             const rList = document.getElementById('admin-reviews-list');
             rList.innerHTML = '';
@@ -779,7 +784,7 @@
                 rList.innerHTML += `
                     <li style="background:#eee; padding:10px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between;">
                         <span><b>${r.name}</b> (${r.stars} نجوم): ${r.text}</span>
-                        <button class="btn-admin btn-delete" onclick="deleteReview(${r.id})">حذف</button>
+                        <button class="btn-admin btn-delete" onclick="deleteReview('${r.id}')">حذف</button>
                     </li>`;
             });
 
@@ -789,45 +794,71 @@
                 pGrid.innerHTML += `
                     <div style="position:relative;">
                         <img src="${p}" style="width:100%; border-radius:8px;">
-                        <button class="btn-admin btn-delete" style="position:absolute; top:5px; right:5px;" onclick="deleteProof(${idx})">X</button>
+                        <button class="btn-admin btn-delete" style="position:absolute; top:5px; right:5px;" onclick="deleteProof(${idx}, '${p.substring(0,20)}')">X</button>
                     </div>`;
             });
         }
 
-        function addReview() {
+        window.addReview = async () => {
             let n = document.getElementById('rev-name').value;
             let s = document.getElementById('rev-stars').value;
             let t = document.getElementById('rev-text').value;
             if(!n || !s || !t) return alert("يرجى ملء كل الحقول");
-            reviews.push({ id: Date.now(), name: n, stars: s, text: t });
-            localStorage.setItem('lux_reviews', JSON.stringify(reviews));
-            document.getElementById('rev-name').value=''; document.getElementById('rev-stars').value=''; document.getElementById('rev-text').value='';
-            renderAdminContent();
-        }
+            
+            const revId = 'REV-' + Date.now();
+            const newRev = { id: revId, name: n, stars: parseInt(s), text: t };
+            
+            try {
+                await setDoc(doc(db, "reviews", revId), newRev);
+                reviews.push(newRev);
+                document.getElementById('rev-name').value=''; document.getElementById('rev-stars').value=''; document.getElementById('rev-text').value='';
+                renderAdminContent();
+            } catch(e) { alert("خطأ في الحفظ"); }
+        };
 
-        function deleteReview(id) {
-            reviews = reviews.filter(r => r.id !== id);
-            localStorage.setItem('lux_reviews', JSON.stringify(reviews));
-            renderAdminContent();
-        }
+        window.deleteReview = async (id) => {
+            try {
+                await deleteDoc(doc(db, "reviews", id));
+                reviews = reviews.filter(r => r.id !== id);
+                renderAdminContent();
+            } catch(e) { alert("خطأ في الحذف"); }
+        };
 
-        async function addProof() {
+        window.addProof = async () => {
             let file = document.getElementById('proof-file').files[0];
             if(!file) return alert('اختر صورة أولا');
+            
+            const btn = event.target;
+            btn.innerText = "جاري الضغط والرفع...";
+            btn.disabled = true;
+
             try {
-                let base64 = await toBase64(file);
-                proofs.push(base64);
-                localStorage.setItem('lux_proofs', JSON.stringify(proofs));
+                // ضغط الإثباتات بقيمة 600 بيكسل أقصى عرض للتقليل من المساحة المستهلكة
+                let compressedBase64 = await compressImage(file, 600, 0.7);
+                const proofId = 'PRF-' + Date.now();
+                await setDoc(doc(db, "proofs", proofId), { id: proofId, image: compressedBase64 });
+                proofs.push(compressedBase64);
                 document.getElementById('proof-file').value = '';
                 renderAdminContent();
-            } catch(e) { alert("مساحة التخزين ممتلئة! يرجى مسح صور قديمة."); }
-        }
+            } catch(e) { 
+                console.error(e);
+                alert("حدث خطأ أثناء رفع الصورة."); 
+            } finally {
+                btn.innerText = "رفع الصورة";
+                btn.disabled = false;
+            }
+        };
 
-        function deleteProof(idx) {
-            proofs.splice(idx, 1);
-            localStorage.setItem('lux_proofs', JSON.stringify(proofs));
-            renderAdminContent();
-        }
+        window.deleteProof = async (idx, shortId) => {
+            try {
+                const snap = await getDocs(collection(db, "proofs"));
+                const docToDelete = snap.docs.find(d => d.data().image.startsWith(shortId));
+                if(docToDelete) await deleteDoc(doc(db, "proofs", docToDelete.id));
+                
+                proofs.splice(idx, 1);
+                renderAdminContent();
+            } catch(e) { alert("خطأ في الحذف"); }
+        };
     </script>
 </body>
 </html>
