@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BouBa STORE</title>
+    <!-- الخطوط والأيقونات -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة الإشعارات المتحركة SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         /* --- المتغيرات والتصميم الأساسي --- */
         :root {
@@ -49,11 +53,7 @@
         /* Landing Page Hero (Single Product) */
         .hero-section { display: flex; flex-wrap: wrap; gap: 40px; padding: 40px 0; }
         .product-gallery { flex: 1; min-width: 300px; }
-        .golden-frame {
-            border: 4px solid var(--gold); padding: 10px; border-radius: var(--radius);
-            background: var(--white); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
-            position: relative; overflow: hidden;
-        }
+        .golden-frame { border: 4px solid var(--gold); padding: 10px; border-radius: var(--radius); background: var(--white); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2); position: relative; overflow: hidden; }
         .main-img { width: 100%; border-radius: 8px; display: block; transition: var(--transition); aspect-ratio: 1/1; object-fit: cover;}
         .main-img:hover { transform: scale(1.05); }
         .thumbnails { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
@@ -85,16 +85,14 @@
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .summary-total { font-size: 1.5rem; font-weight: bold; color: var(--gold); border-top: 1px solid #555; padding-top: 10px; margin-top: 10px; }
 
-        .btn-submit {
-            width: 100%; padding: 15px; background: linear-gradient(45deg, #d4af37, #f3e5ab, #d4af37);
-            background-size: 200% 200%; color: var(--primary); font-size: 1.5rem; font-weight: 900;
-            border: none; border-radius: 50px; cursor: pointer; margin-top: 20px;
-            box-shadow: 0 10px 20px rgba(212,175,55,0.4); animation: gradientMove 3s ease infinite, pulse 2s infinite; transition: var(--transition);
-        }
+        .btn-submit { width: 100%; padding: 15px; background: linear-gradient(45deg, #d4af37, #f3e5ab, #d4af37); background-size: 200% 200%; color: var(--primary); font-size: 1.5rem; font-weight: 900; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 20px rgba(212,175,55,0.4); animation: gradientMove 3s ease infinite, pulse 2s infinite; transition: var(--transition); }
         .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(212,175,55,0.6); }
         .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; animation: none; }
 
-        /* Extra Sections (Reviews & Proofs) */
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* Extra Sections */
         .section-title { text-align: center; font-size: 2rem; margin: 40px 0 20px; color: var(--primary); border-bottom: 2px solid var(--gold); display: inline-block; padding-bottom: 10px;}
         .center-wrap { text-align: center; }
         .reviews { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
@@ -105,11 +103,7 @@
         .proof-img:hover { transform: scale(1.05);}
 
         /* Floating WhatsApp Button */
-        .wa-float {
-            position: fixed; bottom: 30px; left: 30px; background-color: #25d366; color: #FFF; border-radius: 50%;
-            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            font-size: 35px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 100; transition: var(--transition); text-decoration: none;
-        }
+        .wa-float { position: fixed; bottom: 30px; left: 30px; background-color: #25d366; color: #FFF; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 100; transition: var(--transition); text-decoration: none; }
         .wa-float:hover { transform: scale(1.1); background-color: #1ebe57; color: white;}
 
         /* --- Admin Panel Styles --- */
@@ -132,17 +126,19 @@
         .card-canceled { background: var(--danger); }
         .card h3 { font-size: 2rem; margin-top: 10px; }
 
-        .table-responsive { overflow-x: auto; background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px;}
+        /* Table Styling */
+        .table-responsive { overflow-x: auto; white-space: nowrap; background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px;}
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #ddd; }
-        th { background: var(--primary); color: var(--white); }
-        .status-select { padding: 5px; border-radius: 5px; border: 1px solid #ddd; }
+        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #ddd; font-size: 0.95rem;}
+        th { background: var(--primary); color: var(--white); font-weight: bold;}
+        .status-select { padding: 8px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer;}
         
-        /* Admin specific buttons */
         .btn-admin { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white;}
         .btn-add { background: var(--success); margin-bottom: 15px;}
         .btn-edit { background: var(--info); padding: 5px 10px;}
         .btn-delete { background: var(--danger); padding: 5px 10px;}
+        .btn-csv { background: #207245; color: white; margin-right: 15px; }
+        .btn-csv:hover { background: #175734; }
 
         /* Modals */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
@@ -159,13 +155,13 @@
 </head>
 <body>
 
-    <!-- شاشة التحميل لمنع ظهور المحتوى الافتراضي -->
+    <!-- شاشة التحميل -->
     <div id="loader">
         <div class="spinner"></div>
         <h2 style="color: var(--gold);">جاري التحميل...</h2>
     </div>
 
-    <!-- الهيدر ثابت في كل الصفحات (عند الضغط عليه يعود للرئيسية) -->
+    <!-- الهيدر -->
     <header onclick="window.location.hash = ''">
         <div class="container">
             <h1>BouBa STORE <i class="fa-solid fa-crown"></i></h1>
@@ -180,9 +176,7 @@
     <!-- ================= الصفحة الرئيسية (عرض كل المنتجات) ================= -->
     <div id="home-page" class="hidden container">
         <div class="center-wrap"><h2 class="section-title">جميع منتجاتنا</h2></div>
-        <div class="catalog-grid" id="catalog-container">
-            <!-- يتم تعبئة المنتجات هنا بواسطة جافاسكربت -->
-        </div>
+        <div class="catalog-grid" id="catalog-container"></div>
     </div>
 
     <!-- ================= صفحة المنتج المخصص (الطلب) ================= -->
@@ -229,8 +223,13 @@
                                 <select id="cust-wilaya" class="form-control" required onchange="window.calculateTotal()"></select>
                             </div>
                             <div class="form-group">
-                                <label>البلدية / العنوان</label>
+                                <label>البلدية / العنوان بالتفصيل</label>
                                 <input type="text" id="cust-address" class="form-control" required placeholder="أدخل عنوانك بالتفصيل">
+                            </div>
+                            <!-- حقل الكمية الجديد -->
+                            <div class="form-group">
+                                <label>الكمية المطلوبـة</label>
+                                <input type="number" id="cust-qty" class="form-control" value="1" min="1" required onchange="window.calculateTotal()">
                             </div>
                             <div class="form-group">
                                 <label>نوع التوصيل</label>
@@ -242,7 +241,7 @@
                             </div>
 
                             <div class="checkout-summary">
-                                <div class="summary-row"><span>سعر المنتج:</span><span><span id="sum-price">0</span> د.ج</span></div>
+                                <div class="summary-row"><span>سعر المنتج (×<span id="sum-qty-display">1</span>):</span><span><span id="sum-price">0</span> د.ج</span></div>
                                 <div class="summary-row"><span>سعر الشحن:</span><span><span id="sum-shipping">0</span> د.ج</span></div>
                                 <div class="summary-row summary-total"><span>المجموع:</span><span><span id="sum-total">0</span> د.ج</span></div>
                             </div>
@@ -253,11 +252,9 @@
                 </div>
             </div>
 
-            <!-- المنتجات المقترحة -->
             <div class="center-wrap"><h2 class="section-title">قد يعجبك أيضاً 🛍️</h2></div>
-            <div class="catalog-grid" id="suggested-products" style="padding-top: 10px;"></div>
+            <div class="catalog-grid" id="suggested-products"></div>
 
-            <!-- التقييمات والإثباتات -->
             <div class="center-wrap"><h2 class="section-title">آراء عملائنا ⭐</h2></div>
             <div class="reviews" id="public-reviews"></div>
 
@@ -274,7 +271,6 @@
                 <div class="form-group"><input type="text" id="admin-user" class="form-control" placeholder="اسم المستخدم"></div>
                 <div class="form-group"><input type="password" id="admin-pass" class="form-control" placeholder="كلمة المرور"></div>
                 <button onclick="window.loginAdmin()" class="btn-submit" style="animation:none; font-size:1.2rem;">دخول</button>
-                <p id="login-err" style="color:red; margin-top:10px; display:none;">بيانات الدخول خاطئة!</p>
             </div>
         </div>
     </div>
@@ -303,10 +299,28 @@
                         <div class="card card-confirmed" onclick="window.filterOrders('مؤكد')"><h4>طلبات مؤكدة</h4><h3 id="stat-conf">0</h3></div>
                         <div class="card card-canceled" onclick="window.filterOrders('ملغي')"><h4>طلبات ملغية</h4><h3 id="stat-canc">0</h3></div>
                     </div>
-                    <h2><i class="fa-solid fa-list"></i> قائمة الطلبات <span id="current-filter" style="font-size:1rem; color:gray;"></span></h2>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h2><i class="fa-solid fa-list"></i> قائمة الطلبات <span id="current-filter" style="font-size:1rem; color:gray;"></span></h2>
+                        <button class="btn-admin btn-csv" onclick="window.downloadCSV()"><i class="fa-solid fa-file-csv"></i> تحميل ملف CSV (للإكسيل)</button>
+                    </div>
+
                     <div class="table-responsive">
                         <table>
-                            <thead><tr><th>الرقم</th><th>التاريخ</th><th>العميل</th><th>الهاتف</th><th>الولاية</th><th>المنتج</th><th>الإجمالي</th><th>الحالة</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>التاريخ</th>
+                                    <th>الاسم</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>الولاية</th>
+                                    <th>العنوان</th>
+                                    <th>المنتج</th>
+                                    <th>الكمية</th>
+                                    <th>الإجمالي</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
                             <tbody id="orders-tbody"></tbody>
                         </table>
                     </div>
@@ -369,9 +383,8 @@
             <h2 id="modal-title">إضافة منتج جديد</h2><br>
             <form id="product-form" onsubmit="window.saveProduct(event)">
                 <input type="hidden" id="p-id">
-                
                 <div class="form-group">
-                    <label>الرابط المخصص (ID) - يجب أن يكون إنجليزي وبدون مسافات</label>
+                    <label>الرابط المخصص (ID) - إنجليزي وبدون مسافات</label>
                     <input type="text" id="p-custom-id" class="form-control" placeholder="مثال: nike-shoes-2024" required>
                 </div>
                 <div class="form-group"><label>اسم المنتج</label><input type="text" id="p-name" class="form-control" required></div>
@@ -404,7 +417,6 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
         import { getFirestore, collection, getDocs, getDoc, setDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // إعدادات مشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyD0yIvV9kyerbUi9udhjTdvdPckSTBluTk",
             authDomain: "cdestok-marketplace.firebaseapp.com",
@@ -428,7 +440,6 @@
         let activeProduct = null, selectedColor = '', selectedSize = '';
         let isDataLoaded = false;
 
-        // دالة ضغط الصور
         const compressImage = (file, maxWidth = 800, quality = 0.75) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader(); reader.readAsDataURL(file);
@@ -446,7 +457,6 @@
             });
         };
 
-        // جلب البيانات من فايربيس ثم إخفاء شاشة التحميل
         async function fetchFromFirebase() {
             try {
                 const prodSnap = await getDocs(collection(db, "products"));
@@ -468,18 +478,18 @@
                 if(storeSettings.whatsapp && storeSettings.whatsapp.trim() !== "") {
                     waBtn.href = "https://wa.me/" + storeSettings.whatsapp;
                     waBtn.classList.remove('hidden');
-                } else { waBtn.classList.add('hidden'); }
+                }
 
                 isDataLoaded = true;
-                // إخفاء الـ Loader وبدء التوجيه
                 document.getElementById('loader').style.display = 'none';
             } catch (error) {
-                console.error(error); alert("يرجى التأكد من تفعيل قواعد Firestore.");
+                console.error(error);
+                Swal.fire('خطأ!', 'تعذر الاتصال بقاعدة البيانات.', 'error');
                 document.getElementById('loader').style.display = 'none';
             }
         }
 
-        // ================= نظام التوجيه (Routing) =================
+        // ================= Routing =================
         function hideAllPages() {
             document.getElementById('home-page').classList.add('hidden');
             document.getElementById('landing-page').classList.add('hidden');
@@ -502,20 +512,19 @@
                 const pid = hash.replace('#product_', '');
                 showProductPage(pid);
             } else {
-                showHomePage(); // رابط الموقع الأساسي يعرض الكتالوج
+                showHomePage(); 
             }
-            window.scrollTo(0, 0); // رفع الصفحة للأعلى عند التنقل
+            window.scrollTo(0, 0); 
         }
 
         window.onload = async () => { await fetchFromFirebase(); renderRoute(); };
         window.addEventListener('hashchange', () => { if(isDataLoaded) renderRoute(); });
 
-        // --- الصفحة الرئيسية (الكتالوج) ---
         function showHomePage() {
             document.getElementById('home-page').classList.remove('hidden');
             const catalog = document.getElementById('catalog-container');
             catalog.innerHTML = '';
-            if(products.length === 0) { catalog.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">لا توجد منتجات في المتجر حالياً.</p>'; return; }
+            if(products.length === 0) { catalog.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">لا توجد منتجات حالياً.</p>'; return; }
 
             products.forEach(p => {
                 let img = (p.images && p.images.length > 0) ? p.images[0] : '';
@@ -529,10 +538,9 @@
             });
         }
 
-        // --- صفحة المنتج المخصص (الطلب) ---
         function showProductPage(productId) {
             activeProduct = products.find(p => p.id === productId);
-            if(!activeProduct) { alert('عذراً، هذا المنتج غير موجود!'); window.location.hash = ''; return; }
+            if(!activeProduct) { window.location.hash = ''; return; }
             
             document.getElementById('landing-page').classList.remove('hidden');
 
@@ -576,10 +584,9 @@
                 });
             } else { sizeGroup.style.display = 'none'; selectedSize = 'لا يوجد'; }
 
-            // -- المنتجات المقترحة --
+            // المنتجات المقترحة
             const suggDiv = document.getElementById('suggested-products');
             suggDiv.innerHTML = '';
-            // جلب 4 منتجات أخرى كحد أقصى
             const otherProducts = products.filter(p => p.id !== productId).slice(0, 4);
             otherProducts.forEach(p => {
                 let img = (p.images && p.images.length > 0) ? p.images[0] : '';
@@ -591,7 +598,7 @@
                     </div>`;
             });
 
-            // -- التقييمات والإثباتات --
+            // التقييمات 
             const revDiv = document.getElementById('public-reviews');
             revDiv.innerHTML = '';
             reviews.forEach(r => {
@@ -605,6 +612,7 @@
                 proofDiv.innerHTML += `<img src="${p.image}" class="proof-img">`;
             });
 
+            document.getElementById('cust-qty').value = 1; // تصفير الكمية
             window.calculateTotal();
         }
 
@@ -625,24 +633,28 @@
             if(!activeProduct) return;
             const wilayaIndex = parseInt(document.getElementById('cust-wilaya').value) - 1;
             const deliveryType = document.getElementById('cust-delivery').value;
+            const qty = parseInt(document.getElementById('cust-qty').value) || 1;
             const rates = shippingRates[wilayaIndex];
             let shipPrice = (deliveryType === 'home') ? rates.home : rates.desk;
             const submitBtn = document.getElementById('submit-btn');
             const warningMsg = document.getElementById('shipping-warning');
 
+            document.getElementById('sum-qty-display').innerText = qty;
+
             if (shipPrice === 0) {
-                document.getElementById('sum-price').innerText = activeProduct.price;
+                document.getElementById('sum-price').innerText = activeProduct.price * qty;
                 document.getElementById('sum-shipping').innerText = 'غير متوفر';
                 document.getElementById('sum-total').innerText = '---';
                 warningMsg.style.display = 'block'; submitBtn.disabled = true;
                 return { available: false };
             } else {
-                const total = parseInt(activeProduct.price) + shipPrice;
-                document.getElementById('sum-price').innerText = activeProduct.price;
+                const prodTotal = parseInt(activeProduct.price) * qty;
+                const total = prodTotal + shipPrice;
+                document.getElementById('sum-price').innerText = prodTotal;
                 document.getElementById('sum-shipping').innerText = shipPrice;
                 document.getElementById('sum-total').innerText = total;
                 warningMsg.style.display = 'none'; submitBtn.disabled = false;
-                return { total, available: true };
+                return { total, qty, available: true };
             }
         };
 
@@ -650,7 +662,7 @@
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
             const calc = window.calculateTotal();
-            if(!calc.available) return alert('عذراً، التوصيل غير متوفر.');
+            if(!calc.available) return Swal.fire('تنبيه!', 'عذراً، التوصيل غير متوفر لهذه الوجهة.', 'warning');
 
             submitBtn.disabled = true; submitBtn.innerText = "جاري الإرسال...";
 
@@ -663,17 +675,23 @@
                 address: document.getElementById('cust-address').value,
                 delivery: document.getElementById('cust-delivery').value === 'home' ? 'للمنزل' : 'للمكتب',
                 product: activeProduct.name,
-                color: selectedColor, size: selectedSize,
+                color: selectedColor, size: selectedSize, qty: calc.qty,
                 total: calc.total, status: 'قيد المراجعة'
             };
 
             try {
                 await setDoc(doc(db, "orders", newOrder.id), newOrder);
                 orders.unshift(newOrder);
-                alert('🎉 تم استلام طلبك بنجاح! سنتصل بك قريباً للتأكيد.');
+                Swal.fire({
+                    title: 'تم الطلب بنجاح! 🎉',
+                    text: 'لقد استلمنا طلبك وسنقوم بالتواصل معك قريباً للتأكيد.',
+                    icon: 'success',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#d4af37'
+                });
                 e.target.reset(); window.calculateTotal();
             } catch(err) {
-                console.error(err); alert("حدث خطأ أثناء الإرسال. تأكد من تفعيل قواعد Firestore.");
+                console.error(err); Swal.fire('خطأ!', 'حدث خطأ أثناء إرسال الطلب.', 'error');
             } finally {
                 submitBtn.disabled = false; submitBtn.innerHTML = 'تأكيد الطلب الآن <i class="fa-solid fa-cart-shopping"></i>';
             }
@@ -684,10 +702,19 @@
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
             if (user === 'admin' && btoa(pass) === SECRET) {
-                sessionStorage.setItem('isAdmin', 'true'); renderRoute();
-            } else { document.getElementById('login-err').style.display = 'block'; }
+                sessionStorage.setItem('isAdmin', 'true'); 
+                Swal.fire({ icon: 'success', title: 'تم تسجيل الدخول', showConfirmButton: false, timer: 1500 });
+                renderRoute();
+            } else { 
+                Swal.fire('خطأ!', 'بيانات الدخول خاطئة!', 'error');
+            }
         };
-        window.logout = () => { sessionStorage.removeItem('isAdmin'); window.location.hash = ''; };
+
+        window.logout = () => { 
+            sessionStorage.removeItem('isAdmin'); 
+            Swal.fire({ icon: 'info', title: 'تم تسجيل الخروج', showConfirmButton: false, timer: 1500 });
+            window.location.hash = ''; 
+        };
 
         window.showAdminSection = (sectionId) => {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
@@ -698,6 +725,7 @@
             if(sectionId === 'settings') { document.getElementById('setting-whatsapp').value = storeSettings.whatsapp; }
         };
 
+        // --- إدارة الطلبات ---
         function loadAdminData() {
             document.getElementById('stat-all').innerText = orders.length;
             document.getElementById('stat-new').innerText = orders.filter(o => o.status === 'قيد المراجعة').length;
@@ -713,11 +741,18 @@
             tbody.innerHTML = '';
             filtered.forEach(o => {
                 let color = o.status === 'مؤكد' ? 'var(--success)' : o.status === 'ملغي' ? 'var(--danger)' : 'var(--info)';
+                // جدول مفصل ومنظم
                 tbody.innerHTML += `
                     <tr>
-                        <td>${o.id}</td><td>${o.date}</td><td><b>${o.name}</b><br><small>${o.address}</small></td>
-                        <td dir="ltr">${o.phone}</td><td>${o.wilaya}</td>
-                        <td>${o.product} <br><small>اللون: ${o.color} | المقاس: ${o.size}</small></td><td>${o.total} د.ج</td>
+                        <td><b>${o.id}</b></td>
+                        <td>${o.date}</td>
+                        <td><b>${o.name}</b></td>
+                        <td dir="ltr" style="font-weight:bold;">${o.phone}</td>
+                        <td>${o.wilaya}</td>
+                        <td><small>${o.address} (${o.delivery})</small></td>
+                        <td>${o.product} <br><small style="color:gray;">اللون: ${o.color||'-'} | المقاس: ${o.size||'-'}</small></td>
+                        <td style="font-weight:900; color:var(--primary);">${o.qty || 1}</td>
+                        <td style="font-weight:bold; color:var(--gold);">${o.total} د.ج</td>
                         <td>
                             <select class="status-select" style="background:${color}; color:#fff;" onchange="window.updateOrderStatus('${o.id}', this.value)">
                                 <option value="قيد المراجعة" ${o.status === 'قيد المراجعة' ? 'selected' : ''}>قيد المراجعة</option>
@@ -735,12 +770,39 @@
                 orders[idx].status = status; 
                 try {
                     await updateDoc(doc(db, "orders", id), { status: status });
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم تحديث الحالة', showConfirmButton: false, timer: 1500 });
                     loadAdminData(); 
-                } catch(err) { alert("فشل التحديث في القاعدة"); }
+                } catch(err) { Swal.fire('خطأ!', 'فشل التحديث في القاعدة', 'error'); }
             }
         };
 
-        // --- إدارة المنتجات ---
+        // تحميل الطلبات كـ CSV (Excel)
+        window.downloadCSV = () => {
+            if(orders.length === 0) return Swal.fire('عذراً!', 'لا توجد طلبات لتحميلها.', 'info');
+            
+            // BOM لمعالجة اللغة العربية في Excel
+            let csvContent = "\uFEFF"; 
+            csvContent += "رقم الطلب,التاريخ,الاسم,الهاتف,الولاية,العنوان,المنتج,اللون,المقاس,الكمية,الإجمالي (د.ج),الحالة\n";
+            
+            orders.forEach(o => {
+                // يجب إحاطة النصوص بعلامات اقتباس لمنع الفواصل الداخلية من كسر الأعمدة
+                let row = [
+                    o.id, o.date, `"${o.name}"`, `"${o.phone}"`, `"${o.wilaya}"`, `"${o.address} - ${o.delivery}"`,
+                    `"${o.product}"`, o.color || '-', o.size || '-', o.qty || 1, o.total, o.status
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `طلبات_المتجر_${new Date().toLocaleDateString('en-GB').replace(/\//g,'-')}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // --- المنتجات ---
         window.renderAdminProducts = () => {
             const tbody = document.getElementById('products-tbody');
             tbody.innerHTML = '';
@@ -749,7 +811,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td>${img}</td><td>${p.name}</td>
-                        <td><a href="#product_${p.id}" target="_blank">/product_${p.id}</a></td>
+                        <td dir="ltr"><a href="#product_${p.id}" target="_blank">/product_${p.id}</a></td>
                         <td>${p.price} د.ج</td>
                         <td>
                             <button class="btn-admin btn-edit" onclick="window.editProduct('${p.id}')"><i class="fa-solid fa-pen"></i></button>
@@ -787,9 +849,8 @@
             const files = document.getElementById('p-images').files;
             
             try {
-                // التأكد من عدم تكرار الـ ID عند اضافة منتج جديد
                 if(!oldId && products.find(p => p.id === id)) {
-                    alert("هذا الرابط المخصص مستخدم مسبقاً! الرجاء اختيار اسم آخر.");
+                    Swal.fire('تنبيه!', 'الرابط المخصص مستخدم مسبقاً! الرجاء اختيار اسم آخر.', 'warning');
                     btnSave.disabled = false; btnSave.innerText = "حفظ المنتج"; return;
                 }
 
@@ -810,8 +871,9 @@
                 if(idx > -1) products[idx] = prodObj; else products.push(prodObj);
                 
                 window.closeProductModal(); window.renderAdminProducts();
+                Swal.fire('نجاح!', 'تم حفظ المنتج بنجاح!', 'success');
             } catch(err) {
-                console.error(err); alert("خطأ أثناء الحفظ");
+                console.error(err); Swal.fire('خطأ!', 'حدث خطأ أثناء حفظ المنتج.', 'error');
             } finally {
                 btnSave.disabled = false; btnSave.innerText = "حفظ المنتج";
             }
@@ -822,7 +884,7 @@
             if(!p) return;
             document.getElementById('p-id').value = p.id;
             document.getElementById('p-custom-id').value = p.id;
-            document.getElementById('p-custom-id').readOnly = true; // لا يمكن تغيير الرابط بعد الإنشاء
+            document.getElementById('p-custom-id').readOnly = true; 
             document.getElementById('p-name').value = p.name;
             document.getElementById('p-desc').value = p.desc;
             document.getElementById('p-price').value = p.price;
@@ -832,17 +894,21 @@
             document.getElementById('productModal').style.display = 'block';
         };
 
-        window.deleteProduct = async (id) => {
-            if(confirm('هل أنت متأكد من الحذف؟')) {
-                try {
-                    await deleteDoc(doc(db, "products", id));
-                    products = products.filter(p => p.id !== id);
-                    window.renderAdminProducts();
-                } catch(err) { alert("حدث خطأ أثناء الحذف"); }
-            }
+        window.deleteProduct = (id) => {
+            Swal.fire({ title: 'هل أنت متأكد؟', text: "لن تتمكن من التراجع عن الحذف!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'نعم، احذف!', cancelButtonText: 'إلغاء'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await deleteDoc(doc(db, "products", id));
+                        products = products.filter(p => p.id !== id);
+                        window.renderAdminProducts();
+                        Swal.fire('تم الحذف!', 'تم حذف المنتج بنجاح.', 'success');
+                    } catch(err) { Swal.fire('خطأ!', 'حدث خطأ أثناء الحذف.', 'error'); }
+                }
+            });
         };
 
-        // --- إدارة المحتوى (التقييمات / الإثباتات) ---
+        // --- التقييمات والإثباتات ---
         window.renderAdminContent = () => {
             const rList = document.getElementById('admin-reviews-list');
             rList.innerHTML = '';
@@ -869,7 +935,7 @@
             let n = document.getElementById('rev-name').value;
             let s = document.getElementById('rev-stars').value;
             let t = document.getElementById('rev-text').value;
-            if(!n || !s || !t) return alert("يرجى ملء كل الحقول");
+            if(!n || !s || !t) return Swal.fire('تنبيه!', 'يرجى ملء كل الحقول', 'warning');
             
             const revId = 'REV-' + Date.now();
             const newRev = { id: revId, name: n, stars: parseInt(s), text: t };
@@ -879,7 +945,8 @@
                 reviews.push(newRev);
                 document.getElementById('rev-name').value=''; document.getElementById('rev-stars').value=''; document.getElementById('rev-text').value='';
                 window.renderAdminContent();
-            } catch(e) { alert("خطأ في الحفظ"); }
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم إضافة التقييم', showConfirmButton: false, timer: 1500 });
+            } catch(e) { Swal.fire('خطأ!', 'حدث خطأ أثناء الحفظ', 'error'); }
         };
 
         window.deleteReview = async (id) => {
@@ -887,12 +954,13 @@
                 await deleteDoc(doc(db, "reviews", id));
                 reviews = reviews.filter(r => r.id !== id);
                 window.renderAdminContent();
-            } catch(e) { alert("خطأ في الحذف"); }
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم الحذف', showConfirmButton: false, timer: 1500 });
+            } catch(e) { Swal.fire('خطأ!', 'حدث خطأ أثناء الحذف', 'error'); }
         };
 
         window.addProof = async (event) => {
             let file = document.getElementById('proof-file').files[0];
-            if(!file) return alert('اختر صورة أولا');
+            if(!file) return Swal.fire('تنبيه!', 'اختر صورة أولا', 'warning');
             
             const btn = event.target;
             btn.innerText = "جاري الرفع..."; btn.disabled = true;
@@ -905,21 +973,25 @@
                 proofs.push(newProof);
                 document.getElementById('proof-file').value = '';
                 window.renderAdminContent();
-            } catch(e) { alert("حدث خطأ أثناء الرفع."); } 
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم رفع الصورة', showConfirmButton: false, timer: 1500 });
+            } catch(e) { Swal.fire('خطأ!', 'حدث خطأ أثناء الرفع.', 'error'); } 
             finally { btn.innerText = "رفع الصورة"; btn.disabled = false; }
         };
 
-        window.deleteProof = async (id) => {
-            if(confirm("هل تريد حذف الصورة؟")) {
-                try {
-                    await deleteDoc(doc(db, "proofs", id));
-                    proofs = proofs.filter(p => p.id !== id);
-                    window.renderAdminContent();
-                } catch(e) { alert("خطأ في الحذف"); }
-            }
+        window.deleteProof = (id) => {
+            Swal.fire({ title: 'حذف الصورة؟', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'نعم', cancelButtonText: 'إلغاء'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await deleteDoc(doc(db, "proofs", id));
+                        proofs = proofs.filter(p => p.id !== id);
+                        window.renderAdminContent();
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم الحذف', showConfirmButton: false, timer: 1500 });
+                    } catch(e) { Swal.fire('خطأ!', 'حدث خطأ أثناء الحذف', 'error'); }
+                }
+            });
         };
 
-        // --- إدارة الإعدادات (واتساب) ---
         window.saveSettings = async () => {
             const btn = document.getElementById('btn-save-settings');
             btn.innerText = "جاري الحفظ..."; btn.disabled = true;
@@ -929,21 +1001,14 @@
 
             try {
                 await setDoc(doc(db, "settings", "general"), storeSettings);
-                alert("تم حفظ الإعدادات بنجاح!");
-                
-                // تحديث الزر العائم فوراً
+                Swal.fire('نجاح!', 'تم حفظ الإعدادات بنجاح!', 'success');
                 const waBtn = document.getElementById('wa-btn');
                 if(wa && wa !== "") {
                     waBtn.href = "https://wa.me/" + wa;
                     waBtn.classList.remove('hidden');
-                } else {
-                    waBtn.classList.add('hidden');
-                }
-            } catch(e) {
-                alert("فشل الحفظ!");
-            } finally {
-                btn.innerText = "حفظ الإعدادات"; btn.disabled = false;
-            }
+                } else { waBtn.classList.add('hidden'); }
+            } catch(e) { Swal.fire('خطأ!', 'فشل الحفظ!', 'error'); } 
+            finally { btn.innerText = "حفظ الإعدادات"; btn.disabled = false; }
         };
     </script>
 </body>
